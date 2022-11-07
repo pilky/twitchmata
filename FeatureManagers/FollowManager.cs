@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using F10.StreamDeckIntegration;
-using F10.StreamDeckIntegration.Attributes;
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
 using TwitchLib.Unity;
