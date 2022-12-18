@@ -49,7 +49,6 @@ namespace Twitchmata {
         public void Connect() {
             this.pubSub.Connect();
             this.ConnectClient();
-            this.FetchSubscribers();
         }
 
         /// <summary>
@@ -124,7 +123,6 @@ namespace Twitchmata {
                 this.api.Settings.AccessToken = completionSource.Task.Result;
                 this.pubSub.Disconnect();
                 this.pubSub.Connect();
-                this.FetchSubscribers();
                 foreach (FeatureManager manager in this.featureManagers) {
                     manager.InitializeWithAPIManager(this);
                 }
@@ -153,36 +151,6 @@ namespace Twitchmata {
 
 
         //MARK: - Cached Info
-        private List<string> subscribers = new List<string> { };
-
-        private void FetchSubscribers() {
-            var task = Task.Run(() => GetSubscribers());
-            try {
-                task.Wait();
-                this.subscribers = task.Result;
-            } catch {
-                Debug.Log("Failed!");
-            }
-        }
-
-        private async Task<List<string>> GetSubscribers() {
-            var tasks = new List<string> { };
-            var subscribers = await api.Helix.Subscriptions.GetBroadcasterSubscriptionsAsync(Config.channelID);
-
-            foreach (var subscriber in subscribers.Data) {
-                tasks.Add(subscriber.UserId);
-            }
-            return tasks;
-        }
-
-        //MARK: - API Helpers
-        public bool CheckIfSubscribed(string userID) {
-            return this.subscribers.Contains(userID);
-        }
-
-        public void MarkAsSubscribed(string userID) {
-            this.subscribers.Add(userID);
-        }
 
         public async Task<string> GetAvatarURLForUser(string userID) {
             var user = new List<string> { userID };
