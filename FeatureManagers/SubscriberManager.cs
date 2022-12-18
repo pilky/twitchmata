@@ -19,13 +19,14 @@ namespace Twitchmata {
             var subscription = arg.Subscription;
             if (subscription.IsGift == true) {
                 this.manager.MarkAsSubscribed(subscription.RecipientId);
-                this.SubscriptionReceived(subscription);
-            } else {
-                this.manager.MarkAsSubscribed(subscription.UserId);
                 this.GiftSubscriptionReceived(subscription);
+            } else {
+                this.SubscriptionReceived(subscription);
+                this.manager.MarkAsSubscribed(subscription.UserId);
             }
         }
 
+        #region Notifications
         public virtual void SubscriptionReceived(ChannelSubscription sub) {
             Debug.Log($"User Subscribed {sub.Username}");
         }
@@ -33,5 +34,6 @@ namespace Twitchmata {
         public virtual void GiftSubscriptionReceived(ChannelSubscription sub) {
             Debug.Log($"User received gift sub {sub.RecipientName}");
         }
+        #endregion
     }
 }

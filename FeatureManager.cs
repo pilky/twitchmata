@@ -5,8 +5,8 @@ using TwitchLib.Unity;
 namespace Twitchmata {
 
     public class FeatureManager : MonoBehaviour {
-        public TwitchManager manager;
-        public void InitializeWithAPIManager(TwitchManager manager) {
+        public ConnectionManager manager;
+        public void InitializeWithAPIManager(ConnectionManager manager) {
             this.manager = manager;
 
             this.InitializePubSub(manager.pubSub);

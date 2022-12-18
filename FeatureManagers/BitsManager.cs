@@ -17,8 +17,7 @@ namespace Twitchmata {
             this.ReceivedBits(args);
         }
 
-
-        //MARK:- Methods to Override
+        #region Notifications
 
         /// <summary>
         /// Fired when a user gives you bits. 
@@ -27,5 +26,7 @@ namespace Twitchmata {
         public virtual void ReceivedBits(OnBitsReceivedV2Args bitsInfo) {
             Debug.Log($"Received {bitsInfo.BitsUsed} from {bitsInfo.UserName}");
         }
+
+        #endregion
     }
 }

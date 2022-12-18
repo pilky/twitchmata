@@ -18,8 +18,10 @@ namespace Twitchmata {
             this.NewFollower(args);
         }
 
+        #region Notifications
         public virtual void NewFollower(OnFollowArgs follower) {
             Debug.Log("User followed");
         }
+        #endregion
     }
 }

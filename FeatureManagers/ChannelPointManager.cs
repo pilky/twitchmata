@@ -8,6 +8,7 @@ using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
 using TwitchLib.Unity;
 using UnityEngine;
 using System.Threading;
+using UnityEngine.Events;
 
 namespace Twitchmata {
     public class ChannelPointManager : FeatureManager {
@@ -23,7 +24,7 @@ namespace Twitchmata {
         private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e) {
             var redemption = e.RewardRedeemed.Redemption;
             if (redemption.Status == "UNFULFILLED") {
-                this.manager.api.Helix.ChannelPoints.UpdateCustomRewardRedemptionStatus(e.ChannelId, redemption.Id, new List<string>() { redemption.Id }, new UpdateCustomRewardRedemptionStatusRequest() { Status = CustomRewardRedemptionStatus.FULFILLED });
+                this.manager.api.InvokeAsync(this.manager.api.Helix.ChannelPoints.UpdateRedemptionStatusAsync(e.ChannelId, redemption.Id, new List<string>() { redemption.Id }, new UpdateCustomRewardRedemptionStatusRequest() { Status = CustomRewardRedemptionStatus.FULFILLED }));
             } else if (redemption.Status == "FULFILLED") {
                 Debug.Log($"FULFILLED: {redemption.User.DisplayName}, {redemption.Reward.Title}");
             }
@@ -31,8 +32,7 @@ namespace Twitchmata {
             this.ChannelPointsRedeemed(e.RewardRedeemed);
         }
 
-        //MARK:- Methods to Override
-
+        #region Notifications
         /// <summary>
         /// Called when a user redeems a reward using channel points
         /// </summary>
@@ -40,6 +40,8 @@ namespace Twitchmata {
         public virtual void ChannelPointsRedeemed(RewardRedeemed reward) {
             Debug.Log($"User redeemed {reward.Redemption.Reward.Title}");
         }
+
+        #endregion
     }
 }
 

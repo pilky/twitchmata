@@ -21,11 +21,14 @@ namespace Twitchmata {
         }
 
         private void Client_OnRaidNotification(object sender, OnRaidNotificationArgs args) {
-            this.RaidStarted(args.RaidNotification);
+            this.IncomingRaid(args.RaidNotification);
         }
 
-        public virtual void RaidStarted(RaidNotification raidNotification) {
+
+        #region Notifications
+        public virtual void IncomingRaid(RaidNotification raidNotification) {
             Debug.Log($"Raid received from {raidNotification.DisplayName}");
-        }   
+        }
+        #endregion
     }
 }

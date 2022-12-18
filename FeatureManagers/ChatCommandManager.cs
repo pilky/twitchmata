@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Unity;
@@ -17,7 +19,7 @@ namespace Twitchmata {
             this.ReceivedCommand(args.Command);
         }
 
-        public virtual void ReceivedCommand(ChatCommand command) {
+        public virtual void ReceivedCommand(TwitchLib.Client.Models.ChatCommand command) {
             Debug.Log("Chat command received: " + command.CommandText);
         }
     }
