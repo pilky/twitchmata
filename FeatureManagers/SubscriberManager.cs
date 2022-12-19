@@ -9,10 +9,14 @@ using TwitchLib.Unity;
 namespace Twitchmata {
 
     public class SubscriberManager : FeatureManager {
-        override public void InitializePubSub(PubSub pubSub) {
+        override internal void InitializePubSub(PubSub pubSub) {
             pubSub.OnChannelSubscription -= PubSub_OnChannelSubscription;
             pubSub.OnChannelSubscription += PubSub_OnChannelSubscription;
             pubSub.ListenToSubscriptions(this.ChannelID);
+        }
+
+        override public void InitializeFeatureManager() {
+            this.FetchSubscribers();
         }
 
         private void PubSub_OnChannelSubscription(object sender, OnChannelSubscriptionArgs arg) {
@@ -39,40 +43,32 @@ namespace Twitchmata {
         #region Subscriptions
         private List<string> subscribers = new List<string> { };
 
-        private void FetchSubscribers()
-        {
+        private void FetchSubscribers() {
             var task = Task.Run(() => GetSubscribers());
-            try
-            {
+            try {
                 task.Wait();
                 this.subscribers = task.Result;
-            }
-            catch
-            {
+            } catch {
                 Debug.Log("Failed!");
             }
         }
 
-        private async Task<List<string>> GetSubscribers()
-        {
+        private async Task<List<string>> GetSubscribers() {
             var tasks = new List<string> { };
             var subscribers = await this.HelixAPI.Subscriptions.GetBroadcasterSubscriptionsAsync(this.ChannelID);
 
-            foreach (var subscriber in subscribers.Data)
-            {
+            foreach (var subscriber in subscribers.Data) {
                 tasks.Add(subscriber.UserId);
             }
             return tasks;
         }
 
         //MARK: - API Helpers
-        public bool CheckIfSubscribed(string userID)
-        {
+        public bool CheckIfSubscribed(string userID) {
             return this.subscribers.Contains(userID);
         }
 
-        public void MarkAsSubscribed(string userID)
-        {
+        public void MarkAsSubscribed(string userID) {
             this.subscribers.Add(userID);
         }
 

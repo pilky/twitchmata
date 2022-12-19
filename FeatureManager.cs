@@ -6,11 +6,24 @@ namespace Twitchmata {
 
     public class FeatureManager : MonoBehaviour {
         public ConnectionManager manager;
-        public void InitializeWithAPIManager(ConnectionManager manager) {
+        internal void InitializeWithAPIManager(ConnectionManager manager) {
             this.manager = manager;
 
+            this.InitializeFeatureManager();
             this.InitializePubSub(manager.pubSub);
             this.InitializeClient(manager.client);
+        }
+
+        internal virtual void InitializePubSub(PubSub pubSub) {
+
+        }
+
+        internal virtual void InitializeClient(Client client) {
+
+        }
+
+        public virtual void InitializeFeatureManager() {
+
         }
 
         public string ChannelID {
@@ -19,14 +32,6 @@ namespace Twitchmata {
 
         public TwitchLib.Api.Helix.Helix HelixAPI {
             get { return this.manager.api.Helix; }
-        }
-
-        public virtual void InitializePubSub(PubSub pubSub) {
-
-        }
-
-        public virtual void InitializeClient(Client client) {
-
         }
     }
 

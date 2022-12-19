@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Twitchmata {
     public class BitsManager : FeatureManager {
-        public override void InitializePubSub(PubSub pubSub) {
+        override internal void InitializePubSub(PubSub pubSub) {
             pubSub.OnBitsReceivedV2 -= OnBitsReceived;
             pubSub.OnBitsReceivedV2 += OnBitsReceived;
             pubSub.ListenToBitsEventsV2(this.ChannelID);

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Twitchmata {
     public class ChatCommandManager : FeatureManager {
-        override public void InitializeClient(Client client) {
+        override internal void InitializeClient(Client client) {
             Debug.Log("Setting up Chat Command Manager");
             client.OnChatCommandReceived -= Client_OnChatCommandReceived;
             client.OnChatCommandReceived += Client_OnChatCommandReceived;

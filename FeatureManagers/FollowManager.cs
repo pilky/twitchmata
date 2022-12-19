@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Twitchmata {
 
     public class FollowManager : FeatureManager {
-        override public void InitializePubSub(PubSub pubSub) {
+        override internal void InitializePubSub(PubSub pubSub) {
             pubSub.OnFollow -= PubSub_OnFollow;
             pubSub.OnFollow += PubSub_OnFollow;
             pubSub.ListenToFollows(this.ChannelID);

@@ -14,7 +14,7 @@ namespace Twitchmata {
     public class ChannelPointManager : FeatureManager {
         //MARK: - API Setup
 
-        override public void InitializePubSub(PubSub pubSub) {
+        override internal void InitializePubSub(PubSub pubSub) {
             Debug.Log("Setting up Channel Points");
             pubSub.OnChannelPointsRewardRedeemed -= PubSub_OnChannelPointsRewardRedeemed;
             pubSub.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
