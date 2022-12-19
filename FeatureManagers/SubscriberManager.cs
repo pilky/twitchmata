@@ -12,8 +12,7 @@ namespace Twitchmata {
         override public void InitializePubSub(PubSub pubSub) {
             pubSub.OnChannelSubscription -= PubSub_OnChannelSubscription;
             pubSub.OnChannelSubscription += PubSub_OnChannelSubscription;
-            pubSub.ListenToSubscriptions(Config.channelID);
-            this.FetchSubscribers();
+            pubSub.ListenToSubscriptions(this.ChannelID);
         }
 
         private void PubSub_OnChannelSubscription(object sender, OnChannelSubscriptionArgs arg) {
@@ -57,7 +56,7 @@ namespace Twitchmata {
         private async Task<List<string>> GetSubscribers()
         {
             var tasks = new List<string> { };
-            var subscribers = await this.manager.api.Helix.Subscriptions.GetBroadcasterSubscriptionsAsync(Config.channelID);
+            var subscribers = await this.HelixAPI.Subscriptions.GetBroadcasterSubscriptionsAsync(this.ChannelID);
 
             foreach (var subscriber in subscribers.Data)
             {

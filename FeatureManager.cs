@@ -13,6 +13,14 @@ namespace Twitchmata {
             this.InitializeClient(manager.client);
         }
 
+        public string ChannelID {
+            get { return this.manager.ConnectionConfig.ChannelID; }
+        }
+
+        public TwitchLib.Api.Helix.Helix HelixAPI {
+            get { return this.manager.api.Helix; }
+        }
+
         public virtual void InitializePubSub(PubSub pubSub) {
 
         }

@@ -18,13 +18,13 @@ namespace Twitchmata {
             Debug.Log("Setting up Channel Points");
             pubSub.OnChannelPointsRewardRedeemed -= PubSub_OnChannelPointsRewardRedeemed;
             pubSub.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
-            pubSub.ListenToChannelPoints(Config.channelID);
+            pubSub.ListenToChannelPoints(this.ChannelID);
         }
 
         private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e) {
             var redemption = e.RewardRedeemed.Redemption;
             if (redemption.Status == "UNFULFILLED") {
-                this.manager.api.InvokeAsync(this.manager.api.Helix.ChannelPoints.UpdateRedemptionStatusAsync(e.ChannelId, redemption.Id, new List<string>() { redemption.Id }, new UpdateCustomRewardRedemptionStatusRequest() { Status = CustomRewardRedemptionStatus.FULFILLED }));
+                this.manager.api.InvokeAsync(this.HelixAPI.ChannelPoints.UpdateRedemptionStatusAsync(e.ChannelId, redemption.Id, new List<string>() { redemption.Id }, new UpdateCustomRewardRedemptionStatusRequest() { Status = CustomRewardRedemptionStatus.FULFILLED }));
             } else if (redemption.Status == "FULFILLED") {
                 Debug.Log($"FULFILLED: {redemption.User.DisplayName}, {redemption.Reward.Title}");
             }

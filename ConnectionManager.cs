@@ -19,7 +19,12 @@ namespace Twitchmata {
         public Api api { get; private set; }
         public Client client { get; private set; }
 
-        public ConnectionManager() {
+        public ConnectionConfig ConnectionConfig { get; private set; }
+        public Secrets Secrets { get; private set; }
+
+        public ConnectionManager(ConnectionConfig connectionConfig, Secrets secrets) {
+            this.ConnectionConfig = connectionConfig;
+            this.Secrets = secrets;
             this.SetupAPIAndPubSub();
             this.SetupClient();
         }
@@ -31,8 +36,8 @@ namespace Twitchmata {
 
         private void SetupAPIAndPubSub() {
             this.api = new Api();
-            this.api.Settings.ClientId = Secrets.ClientID();
-            this.api.Settings.AccessToken = Secrets.AccountAccessToken();
+            this.api.Settings.ClientId = this.Secrets.ClientID();
+            this.api.Settings.AccessToken = this.Secrets.AccountAccessToken();
 
             this.pubSub = new PubSub();
             this.pubSub.OnListenResponse += PubSub_OnListenResponse;
@@ -60,8 +65,8 @@ namespace Twitchmata {
         }
 
         private void ConnectClient() {
-            ConnectionCredentials credentials = new ConnectionCredentials("pilkybot", Secrets.BotAccessToken());
-            this.client.Initialize(credentials, Config.channelName);
+            ConnectionCredentials credentials = new ConnectionCredentials(this.ConnectionConfig.BotName, this.Secrets.BotAccessToken());
+            this.client.Initialize(credentials, this.ConnectionConfig.ChannelName);
             foreach (FeatureManager manager in this.featureManagers) {
                 manager.InitializeClient(this.client);
             }
@@ -71,23 +76,23 @@ namespace Twitchmata {
         //MARK: - Access Tokens
         public bool isAccessTokenValid = false;
         private void RefreshBotAccessToken() {
-            var refreshToken = Secrets.BotRefreshToken();
-            var clientSecret = Secrets.ClientSecret();
+            var refreshToken = this.Secrets.BotRefreshToken();
+            var clientSecret = this.Secrets.ClientSecret();
             var task = Task.Run(() => api.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret));
             task.Wait();
             var response = task.Result;
-            Secrets.SetBotAccessToken(response.AccessToken);
-            Secrets.SetBotRefreshToken(response.RefreshToken);
+            this.Secrets.SetBotAccessToken(response.AccessToken);
+            this.Secrets.SetBotRefreshToken(response.RefreshToken);
             this.SetupClient();
             this.ConnectClient();
         }
 
         private async Task<string> RefreshAccountAccessToken() {
-            var refreshToken = Secrets.AccountRefreshToken();
-            var clientSecret = Secrets.ClientSecret();
+            var refreshToken = this.Secrets.AccountRefreshToken();
+            var clientSecret = this.Secrets.ClientSecret();
             var response = await api.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret);
-            Secrets.SetAccountAccessToken(response.AccessToken);
-            Secrets.SetAccountRefreshToken(response.RefreshToken);
+            this.Secrets.SetAccountAccessToken(response.AccessToken);
+            this.Secrets.SetAccountRefreshToken(response.RefreshToken);
             return response.AccessToken;
         }
 
@@ -132,7 +137,7 @@ namespace Twitchmata {
 
         private void PubSub_OnPubSubServiceConnected(object sender, System.EventArgs args) {
             Debug.Log("Connected");
-            this.pubSub.SendTopics(Secrets.AccountAccessToken());
+            this.pubSub.SendTopics(this.Secrets.AccountAccessToken());
         }
 
         private void PubSub_OnPubSubServiceClosed(object sender, System.EventArgs args) {

@@ -10,7 +10,7 @@ namespace Twitchmata {
         public override void InitializePubSub(PubSub pubSub) {
             pubSub.OnBitsReceivedV2 -= OnBitsReceived;
             pubSub.OnBitsReceivedV2 += OnBitsReceived;
-            pubSub.ListenToBitsEventsV2(Config.channelID);
+            pubSub.ListenToBitsEventsV2(this.ChannelID);
         }
 
         private void OnBitsReceived(object sender, OnBitsReceivedV2Args args) {

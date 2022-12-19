@@ -11,7 +11,7 @@ namespace Twitchmata {
         override public void InitializePubSub(PubSub pubSub) {
             pubSub.OnFollow -= PubSub_OnFollow;
             pubSub.OnFollow += PubSub_OnFollow;
-            pubSub.ListenToFollows(Twitchmata.Config.channelID);
+            pubSub.ListenToFollows(this.ChannelID);
         }
 
         private void PubSub_OnFollow(object sender, OnFollowArgs args) {
