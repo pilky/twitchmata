@@ -1,8 +1,8 @@
 ﻿using System;
 
 namespace Twitchmata.Models {
-    class IncomingRaid {
-        User User;
-        int ViewerCount;
+    public struct IncomingRaid {
+        public User Raider;
+        public int ViewerCount;
     }
 }

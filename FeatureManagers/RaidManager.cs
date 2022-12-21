@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,14 +16,24 @@ namespace Twitchmata {
         }
 
         private void Client_OnRaidNotification(object sender, OnRaidNotificationArgs args) {
-            this.IncomingRaid(args.RaidNotification);
+            var user = this.UserManager.UserForRaidNotification(args.RaidNotification);
+            var raid = new Models.IncomingRaid() {
+                Raider = user,
+                ViewerCount = Int32.Parse(args.RaidNotification.MsgParamViewerCount),
+            };
+            this.RaidsThisStream.Add(raid);
+            this.RaidReceived(raid);
         }
 
 
         #region Notifications
-        public virtual void IncomingRaid(RaidNotification raidNotification) {
-            Debug.Log($"Raid received from {raidNotification.DisplayName}");
+        public virtual void RaidReceived(Models.IncomingRaid raid) {
+            Debug.Log($"{raid.Raider.DisplayName} raided with {raid.ViewerCount} viewers");
         }
+        #endregion
+
+        #region Stats
+        public List<Models.IncomingRaid> RaidsThisStream { get; private set; } = new List<Models.IncomingRaid>() { };
         #endregion
     }
 }
