@@ -2,12 +2,12 @@
 
 namespace Twitchmata.Models { 
     public class Subscription {
-        public int SubscribedMonthCount { get; internal set; }; //Chat + PubSub
-        public int StreakMonths { get; internal set; }; //PubSub
-        public SubscriptionTier Tier { get; internal set; }; //PubSub + API
-        public string PlanName { get; internal set; }; //PubSub + API
-        public bool IsGift { get; internal set; }; //PubSub + API
-        public User Gifter { get; internal set; };
+        public int SubscribedMonthCount { get; internal set; } //Chat + PubSub
+        public int StreakMonths { get; internal set; } //PubSub
+        public SubscriptionTier Tier { get; internal set; } //PubSub + API
+        public string PlanName { get; internal set; } //PubSub + API
+        public bool IsGift { get; internal set; } //PubSub + API
+        public User Gifter { get; internal set; }
 
         static public SubscriptionTier TierForString(string tierString) {
             if (tierString == "1000") {

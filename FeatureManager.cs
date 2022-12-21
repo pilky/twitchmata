@@ -20,6 +20,10 @@ namespace Twitchmata {
         public TwitchLib.Api.Helix.Helix HelixAPI {
             get { return this.Manager.API.Helix; }
         }
+
+        internal UserManager UserManager {
+            get { return this.Manager.UserManager; }
+        }
         #endregion
 
 

@@ -1,12 +1,12 @@
 ﻿using System;
 
 namespace Twitchmata.Models {
-    class BitsRedemption {
-        int BitsUsed;
-        int TotalBitsUsed;
-        User? User; //can be null if anonymous
-        DateTime RedeemedAt;
-        string Message;
+    public struct BitsRedemption {
+        public int BitsUsed;
+        public int TotalBitsUsed;
+        public User? User; //can be null if anonymous
+        public DateTime RedeemedAt;
+        public string Message;
     }
 }
 
