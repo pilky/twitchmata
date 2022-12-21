@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TwitchLib.Unity;
+using System.Threading.Tasks;
+using System;
 
 namespace Twitchmata {
 

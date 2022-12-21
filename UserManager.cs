@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TwitchLib.Api.Helix.Models.ChannelPoints;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelVIPs;
+using TwitchLib.Api.Helix.Models.Common;
 using TwitchLib.Api.Helix.Models.Moderation.GetModerators;
 using TwitchLib.Api.Helix.Models.Subscriptions;
 using TwitchLib.Client.Models;
@@ -34,6 +35,19 @@ namespace Twitchmata {
                 }
             }
             return null;
+        }
+
+        public void FetchUserWithUserName(string userName, Action<Models.User> action) {
+            var task = this.ConnectionManager.API.Helix.Users.GetUsersAsync(null, new List<string> { userName });
+            TwitchManager.RunTask(task, obj => {
+                var users = obj.Users;
+                if (users.Length == 0) {
+                    action.Invoke(null);
+                    return;
+                }
+                var user = this.ExistingOrNewUser(users[0].Id, users[0].Login, users[0].DisplayName);
+                action.Invoke(user);
+            });
         }
 
         private Models.User ExistingOrNewUser(string userID, string userName, string displayName) {
@@ -151,7 +165,7 @@ namespace Twitchmata {
 
         private void FetchNextSubscribers(string pagination = null) {
             var task = this.ConnectionManager.API.Helix.Subscriptions.GetBroadcasterSubscriptionsAsync(this.ChannelID, UserManager.FetchSize, pagination);
-            this.ConnectionManager.API.Invoke(task, obj => {
+            TwitchManager.RunTask(task, obj => {
                 var subscribers = obj.Data;
                 if (subscribers.Length == UserManager.FetchSize && obj.Pagination != null) {
                     this.FetchNextSubscribers(obj.Pagination.Cursor);
@@ -165,7 +179,7 @@ namespace Twitchmata {
 
         private void FetchNextVIPs(string pagination = null) {
             var task = this.ConnectionManager.API.Helix.Channels.GetVIPsAsync(this.ChannelID, null, UserManager.FetchSize, pagination);
-            this.ConnectionManager.API.Invoke(task, obj => {
+            TwitchManager.RunTask(task, obj => {
                 var vips = obj.Data;
                 if (vips.Length == UserManager.FetchSize && obj.Pagination != null) {
                     this.FetchNextVIPs(obj.Pagination.Cursor);
@@ -180,7 +194,7 @@ namespace Twitchmata {
         private void FetchNextModerators(string pagination = null)
         {
             var task = this.ConnectionManager.API.Helix.Moderation.GetModeratorsAsync(this.ChannelID, null, UserManager.FetchSize, pagination);
-            this.ConnectionManager.API.Invoke(task, obj => {
+            TwitchManager.RunTask(task, obj => {
                 var moderators = obj.Data;
                 if (moderators.Length == UserManager.FetchSize && obj.Pagination != null) {
                     this.FetchNextModerators(obj.Pagination.Cursor);

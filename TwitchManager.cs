@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using System.Threading.Tasks;
+using TwitchLib.Unity;
 
 namespace Twitchmata {
     public class TwitchManager : MonoBehaviour {
@@ -41,8 +44,49 @@ namespace Twitchmata {
         [Tooltip("Location of secrets files on disk. Leave blank to use default.")]
         public string SecretsPath;
         #endregion
+
+
+        #region Threading Helper
+        internal static void RunTask<T>(Task<T> func, Action<T> action)
+        {
+            ThreadDispatcher.EnsureCreated("InvokeInternal");
+            func.ContinueWith(delegate (Task<T> x) {
+                try
+                {
+                    T value = x.Result;
+
+                    ThreadDispatcher.Enqueue(delegate {
+                        action(value);
+                    });
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error getting result: " + e.Message);
+                }
+            });
+        }
+
+        internal static void RunTask(Task func, Action action)
+        {
+            ThreadDispatcher.EnsureCreated("InvokeInternal");
+            func.ContinueWith(delegate (Task x) {
+                try
+                {
+                    x.Wait();
+
+                    ThreadDispatcher.Enqueue(delegate {
+                        action();
+                    });
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error getting result: " + e.Message);
+                }
+            });
+        }
+        #endregion
     }
 
-    
+
 }
 
