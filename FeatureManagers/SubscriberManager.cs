@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using TwitchLib.Unity;
 
 namespace Twitchmata {
-
     public class SubscriberManager : FeatureManager {
         override internal void InitializePubSub(PubSub pubSub) {
             pubSub.OnChannelSubscription -= PubSub_OnChannelSubscription;
@@ -41,13 +40,13 @@ namespace Twitchmata {
         #endregion
 
         #region Subscriptions
-        private List<string> subscribers = new List<string> { };
+        private List<string> Subscribers = new List<string> { };
 
         private void FetchSubscribers() {
             var task = Task.Run(() => GetSubscribers());
             try {
                 task.Wait();
-                this.subscribers = task.Result;
+                this.Subscribers = task.Result;
             } catch {
                 Debug.Log("Failed!");
             }
@@ -65,11 +64,11 @@ namespace Twitchmata {
 
         //MARK: - API Helpers
         public bool CheckIfSubscribed(string userID) {
-            return this.subscribers.Contains(userID);
+            return this.Subscribers.Contains(userID);
         }
 
         public void MarkAsSubscribed(string userID) {
-            this.subscribers.Add(userID);
+            this.Subscribers.Add(userID);
         }
 
         #endregion

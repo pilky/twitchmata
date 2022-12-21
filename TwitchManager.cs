@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Twitchmata {
     public class TwitchManager : MonoBehaviour {
-        public ConnectionManager connectionManager;
+        public ConnectionManager ConnectionManager;
         private void Start() {
             if (this.SecretsPath == null || this.SecretsPath == "") {
                 this.SecretsPath = Application.persistentDataPath;
@@ -12,22 +12,22 @@ namespace Twitchmata {
         }
 
         public void Reset() {
-            if (this.connectionManager != null) {
-                this.connectionManager.Disconnect();
+            if (this.ConnectionManager != null) {
+                this.ConnectionManager.Disconnect();
             }
 
-            this.connectionManager = new ConnectionManager(this.ConnectionConfig, new Secrets(this.SecretsPath));
+            this.ConnectionManager = new ConnectionManager(this.ConnectionConfig, new Secrets(this.SecretsPath));
             this.DiscoverFeatureManagers();
-            this.connectionManager.Connect();
+            this.ConnectionManager.Connect();
         }
 
         private void DiscoverFeatureManagers() {
             foreach (var manager in this.GetComponents<FeatureManager>()) {
-                this.connectionManager.RegisterFeatureManager(manager);
+                this.ConnectionManager.RegisterFeatureManager(manager);
             }
 
             foreach (var manager in this.GetComponentsInChildren<FeatureManager>()) {
-                this.connectionManager.RegisterFeatureManager(manager);
+                this.ConnectionManager.RegisterFeatureManager(manager);
             }
         }
 

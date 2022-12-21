@@ -15,9 +15,10 @@ using TwitchLib.Api.Auth;
 namespace Twitchmata {
     public class ConnectionManager {
 
-        public PubSub pubSub { get; private set; }
-        public Api api { get; private set; }
-        public Client client { get; private set; }
+        public PubSub PubSub { get; private set; }
+        public Api API { get; private set; }
+        public Client Client { get; private set; }
+        internal UserManager UserManager { get; private set; }
 
         public ConnectionConfig ConnectionConfig { get; private set; }
         public Secrets Secrets { get; private set; }
@@ -27,32 +28,34 @@ namespace Twitchmata {
             this.Secrets = secrets;
             this.SetupAPIAndPubSub();
             this.SetupClient();
+            this.UserManager = new UserManager(this);
+            this.UserManager.FetchUserInfo();
         }
 
         private void SetupClient() {
-            this.client = new Client();
-            this.client.OnIncorrectLogin += Client_OnIncorrectLogin;
+            this.Client = new Client();
+            this.Client.OnIncorrectLogin += Client_OnIncorrectLogin;
         }
 
         private void SetupAPIAndPubSub() {
-            this.api = new Api();
-            this.api.Settings.ClientId = this.Secrets.ClientID();
-            this.api.Settings.AccessToken = this.Secrets.AccountAccessToken();
+            this.API = new Api();
+            this.API.Settings.ClientId = this.Secrets.ClientID();
+            this.API.Settings.AccessToken = this.Secrets.AccountAccessToken();
 
-            this.pubSub = new PubSub();
-            this.pubSub.OnListenResponse += PubSub_OnListenResponse;
-            this.pubSub.OnPubSubServiceConnected += PubSub_OnPubSubServiceConnected;
-            this.pubSub.OnPubSubServiceClosed += PubSub_OnPubSubServiceClosed;
-            this.pubSub.OnPubSubServiceError += PubSub_OnPubSubServiceError;
+            this.PubSub = new PubSub();
+            this.PubSub.OnListenResponse += PubSub_OnListenResponse;
+            this.PubSub.OnPubSubServiceConnected += PubSub_OnPubSubServiceConnected;
+            this.PubSub.OnPubSubServiceClosed += PubSub_OnPubSubServiceClosed;
+            this.PubSub.OnPubSubServiceError += PubSub_OnPubSubServiceError;
         }
 
 
-        //MARK: - Connection
+        #region Connection
         /// <summary>
         /// Connect to PubSub and Chat Bot
         /// </summary>
         public void Connect() {
-            this.pubSub.Connect();
+            this.PubSub.Connect();
             this.ConnectClient();
         }
 
@@ -60,25 +63,26 @@ namespace Twitchmata {
         /// Disconnect from PubSub and Chat Bot
         /// </summary>
         public void Disconnect() {
-            this.pubSub.Disconnect();
-            this.client.Disconnect();
+            this.PubSub.Disconnect();
+            this.Client.Disconnect();
         }
 
         private void ConnectClient() {
             ConnectionCredentials credentials = new ConnectionCredentials(this.ConnectionConfig.BotName, this.Secrets.BotAccessToken());
-            this.client.Initialize(credentials, this.ConnectionConfig.ChannelName);
-            foreach (FeatureManager manager in this.featureManagers) {
-                manager.InitializeClient(this.client);
+            this.Client.Initialize(credentials, this.ConnectionConfig.ChannelName);
+            foreach (FeatureManager manager in this.FeatureManagers) {
+                manager.InitializeClient(this.Client);
             }
-            this.client.Connect();
+            this.Client.Connect();
         }
 
-        //MARK: - Access Tokens
-        public bool isAccessTokenValid = false;
+        #endregion
+
+        #region Access Tokens
         private void RefreshBotAccessToken() {
             var refreshToken = this.Secrets.BotRefreshToken();
             var clientSecret = this.Secrets.ClientSecret();
-            var task = Task.Run(() => api.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret));
+            var task = Task.Run(() => API.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret));
             task.Wait();
             var response = task.Result;
             this.Secrets.SetBotAccessToken(response.AccessToken);
@@ -90,54 +94,59 @@ namespace Twitchmata {
         private async Task<string> RefreshAccountAccessToken() {
             var refreshToken = this.Secrets.AccountRefreshToken();
             var clientSecret = this.Secrets.ClientSecret();
-            var response = await api.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret);
+            var response = await API.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret);
             this.Secrets.SetAccountAccessToken(response.AccessToken);
             this.Secrets.SetAccountRefreshToken(response.RefreshToken);
             return response.AccessToken;
         }
+        #endregion
 
-        //MARK: - Client Basics
+
+        #region Client Management
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs args) {
             Debug.Log("Updating Bot Token");
             this.RefreshBotAccessToken();
         }
 
-        //MARK: - PubSub Basics
+        #endregion
+
+
+        #region PubSub Management
         private void PubSub_OnListenResponse(object sender, OnListenResponseArgs args) {
             if (args.Successful == false) {
                 Debug.Log("PubSub Error: " + args.Response.Error);
                 if (args.Response.Error == "ERR_BADAUTH") {
-                    if (this.isResettingPubSub == false) {
+                    if (this.IsResettingPubSub == false) {
                         this.ResetPubSub();
                     }
                 }
             }
         }
 
-        private bool isResettingPubSub = false;
+        private bool IsResettingPubSub = false;
 
         private void ResetPubSub() {
-            this.isResettingPubSub = true;
+            this.IsResettingPubSub = true;
             var completionSource = new TaskCompletionSource<string>();
             Task.Run(async () => {
                 completionSource.SetResult(await this.RefreshAccountAccessToken());
             });
 
             completionSource.Task.ConfigureAwait(true).GetAwaiter().OnCompleted(() => {
-                this.api.Settings.AccessToken = completionSource.Task.Result;
-                this.pubSub.Disconnect();
-                this.pubSub.Connect();
-                foreach (FeatureManager manager in this.featureManagers) {
+                this.API.Settings.AccessToken = completionSource.Task.Result;
+                this.PubSub.Disconnect();
+                this.PubSub.Connect();
+                foreach (FeatureManager manager in this.FeatureManagers) {
                     manager.InitializeWithAPIManager(this);
                 }
-                this.isResettingPubSub = false;
+                this.IsResettingPubSub = false;
             });
         }
 
         private void PubSub_OnPubSubServiceConnected(object sender, System.EventArgs args) {
             Debug.Log("Connected");
-            this.pubSub.SendTopics(this.Secrets.AccountAccessToken());
+            this.PubSub.SendTopics(this.Secrets.AccountAccessToken());
         }
 
         private void PubSub_OnPubSubServiceClosed(object sender, System.EventArgs args) {
@@ -148,18 +157,22 @@ namespace Twitchmata {
             Debug.Log("Pub Sub Error: " + args.Exception.Message);
         }
 
-        public List<FeatureManager> featureManagers { get; private set; } = new List<FeatureManager>();
+        #endregion
+
+
+        #region Feature Managers
+        public List<FeatureManager> FeatureManagers { get; private set; } = new List<FeatureManager>();
         public void RegisterFeatureManager(FeatureManager manager) {
-            this.featureManagers.Add(manager);
+            this.FeatureManagers.Add(manager);
             manager.InitializeWithAPIManager(this);
         }
+        #endregion
 
 
-        //MARK: - Cached Info
-
+        //To move out
         public async Task<string> GetAvatarURLForUser(string userID) {
             var user = new List<string> { userID };
-            var users = await api.Helix.Users.GetUsersAsync(user);
+            var users = await API.Helix.Users.GetUsersAsync(user);
 
             if (users == null || users.Users.Length == 0) {
                 return "";

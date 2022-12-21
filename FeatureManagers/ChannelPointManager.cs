@@ -12,8 +12,6 @@ using UnityEngine.Events;
 
 namespace Twitchmata {
     public class ChannelPointManager : FeatureManager {
-        //MARK: - API Setup
-
         override internal void InitializePubSub(PubSub pubSub) {
             Debug.Log("Setting up Channel Points");
             pubSub.OnChannelPointsRewardRedeemed -= PubSub_OnChannelPointsRewardRedeemed;
@@ -24,7 +22,7 @@ namespace Twitchmata {
         private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e) {
             var redemption = e.RewardRedeemed.Redemption;
             if (redemption.Status == "UNFULFILLED") {
-                this.manager.api.InvokeAsync(this.HelixAPI.ChannelPoints.UpdateRedemptionStatusAsync(e.ChannelId, redemption.Id, new List<string>() { redemption.Id }, new UpdateCustomRewardRedemptionStatusRequest() { Status = CustomRewardRedemptionStatus.FULFILLED }));
+                this.Manager.API.InvokeAsync(this.HelixAPI.ChannelPoints.UpdateRedemptionStatusAsync(e.ChannelId, redemption.Id, new List<string>() { redemption.Id }, new UpdateCustomRewardRedemptionStatusRequest() { Status = CustomRewardRedemptionStatus.FULFILLED }));
             } else if (redemption.Status == "FULFILLED") {
                 Debug.Log($"FULFILLED: {redemption.User.DisplayName}, {redemption.Reward.Title}");
             }

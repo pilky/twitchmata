@@ -2,7 +2,7 @@
 
 namespace Twitchmata.Models {
     class IncomingRaid {
-        User user;
+        User User;
         int ViewerCount;
     }
 }

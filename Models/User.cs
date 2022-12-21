@@ -1,16 +1,22 @@
 ﻿using System;
 
 namespace Twitchmata.Models {
-    class User {
-        string UserId; //Chat + Follower + ChannelPoint + PubSub Sub + API + Raid
-        string Username; //Chat + Follower + ChannelPoint + PubSub Sub + API + Raid
-        string DisplayName; //Chat + Follower + ChannelPoint + PubSub Sub + API + Raid
+    public class User {
+        public string UserId { get; }
+        public string UserName { get; }
+        public string DisplayName { get; }
 
-        bool IsBroadcaster; //Chat
-        bool IsModerator; //Chat + Raid
-        bool IsVIP; //Chat
-        bool IsSubscriber; //Chat + Raid + PubSub + API
+        internal User(string userID, string userName, string displayName) {
+            this.UserId = userID;
+            this.UserName = userName;
+            this.DisplayName = displayName;
+        }
 
-        Subscription? subscription;
+        public bool IsBroadcaster { get; internal set; } = false;
+        public bool IsModerator { get; internal set; } = false;
+        public bool IsVIP { get; internal set; } = false;
+        public bool IsSubscriber { get; internal set; } = false;
+
+        public Subscription? Subscription { get; internal set; } = null;
     }
 }
