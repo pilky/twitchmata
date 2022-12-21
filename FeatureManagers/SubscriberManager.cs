@@ -5,6 +5,8 @@ using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Models.Responses.Messages;
 using System.Threading.Tasks;
 using TwitchLib.Unity;
+using Twitchmata;
+using Twitchmata.Models;
 
 namespace Twitchmata {
     public class SubscriberManager : FeatureManager {
@@ -14,63 +16,28 @@ namespace Twitchmata {
             pubSub.ListenToSubscriptions(this.ChannelID);
         }
 
-        override public void InitializeFeatureManager() {
-            this.FetchSubscribers();
-        }
-
         private void PubSub_OnChannelSubscription(object sender, OnChannelSubscriptionArgs arg) {
-            var subscription = arg.Subscription;
-            if (subscription.IsGift == true) {
-                this.MarkAsSubscribed(subscription.RecipientId);
-                this.GiftSubscriptionReceived(subscription);
+            var user = this.UserManager.UserForSubscriptionNotification(arg.Subscription);
+            this.SubscribersThisStream.Add(user);
+            if (arg.Subscription.IsGift == true) {
+                this.UserGiftedSubscription(user);
             } else {
-                this.SubscriptionReceived(subscription);
-                this.MarkAsSubscribed(subscription.UserId);
+                this.UserSubscribed(user);
             }
         }
 
         #region Notifications
-        public virtual void SubscriptionReceived(ChannelSubscription sub) {
-            Debug.Log($"User Subscribed {sub.Username}");
+        public virtual void UserSubscribed(Models.User subscriber) {
+            Debug.Log($"{subscriber.DisplayName} subscribed");
         }
 
-        public virtual void GiftSubscriptionReceived(ChannelSubscription sub) {
-            Debug.Log($"User received gift sub {sub.RecipientName}");
+        public virtual void UserGiftedSubscription(Models.User subscriber) {
+            Debug.Log($"{subscriber.DisplayName} received gift sub from {subscriber.Subscription.Gifter.DisplayName}");
         }
         #endregion
 
-        #region Subscriptions
-        private List<string> Subscribers = new List<string> { };
-
-        private void FetchSubscribers() {
-            var task = Task.Run(() => GetSubscribers());
-            try {
-                task.Wait();
-                this.Subscribers = task.Result;
-            } catch {
-                Debug.Log("Failed!");
-            }
-        }
-
-        private async Task<List<string>> GetSubscribers() {
-            var tasks = new List<string> { };
-            var subscribers = await this.HelixAPI.Subscriptions.GetBroadcasterSubscriptionsAsync(this.ChannelID);
-
-            foreach (var subscriber in subscribers.Data) {
-                tasks.Add(subscriber.UserId);
-            }
-            return tasks;
-        }
-
-        //MARK: - API Helpers
-        public bool CheckIfSubscribed(string userID) {
-            return this.Subscribers.Contains(userID);
-        }
-
-        public void MarkAsSubscribed(string userID) {
-            this.Subscribers.Add(userID);
-        }
-
+        #region Stats
+        public List<Models.User> SubscribersThisStream { get; private set; } = new List<Models.User>() { };
         #endregion
     }
 }

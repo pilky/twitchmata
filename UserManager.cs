@@ -12,7 +12,7 @@ using Twitchmata.Models;
 using UnityEngine;
 
 namespace Twitchmata {
-    class UserManager {
+    public class UserManager {
         internal ConnectionManager ConnectionManager;
         internal UserManager(ConnectionManager connectionManager){
             this.ConnectionManager = connectionManager;
