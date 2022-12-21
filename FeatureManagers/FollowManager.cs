@@ -15,13 +15,20 @@ namespace Twitchmata {
         }
 
         private void PubSub_OnFollow(object sender, OnFollowArgs args) {
-            this.NewFollower(args);
+            var user = this.UserManager.UserForFollowNotification(args);
+            this.FollowsThisStream.Add(user);
+            this.UserFollowed(user);
         }
 
         #region Notifications
-        public virtual void NewFollower(OnFollowArgs follower) {
-            Debug.Log("User followed");
+        public virtual void UserFollowed(Models.User follower) {
+            Debug.Log($"User followed: {follower.DisplayName}");
         }
+        #endregion
+
+
+        #region Stats
+        public List<Models.User> FollowsThisStream { get; private set; } = new List<Models.User>() { };
         #endregion
     }
 }
