@@ -1,11 +1,10 @@
 ﻿using System;
 
 namespace Twitchmata.Models {
-    class ChannelPointRedemption {
-        User User;
-        DateTime RedeemedAt;
-        ChannelPointReward Reward;
-        string UserInput;
+    public struct ChannelPointRedemption {
+        public User User;
+        public DateTime RedeemedAt;
+        public string UserInput;
     }
 }
 

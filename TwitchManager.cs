@@ -51,16 +51,14 @@ namespace Twitchmata {
         {
             ThreadDispatcher.EnsureCreated("InvokeInternal");
             func.ContinueWith(delegate (Task<T> x) {
-                try
-                {
+                try {
                     T value = x.Result;
 
                     ThreadDispatcher.Enqueue(delegate {
                         action(value);
                     });
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     Debug.LogError("Error getting result: " + e.Message);
                 }
             });

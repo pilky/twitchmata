@@ -15,6 +15,6 @@ namespace Twitchmata {
         Mods = 1,
         VIPs = 2,
         Subscribers = 4,
-        Chatters = 8
+        Everyone = 8
     }
 }

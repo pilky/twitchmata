@@ -18,5 +18,26 @@ namespace Twitchmata.Models {
         public bool IsSubscriber { get; internal set; } = false;
 
         public Subscription? Subscription { get; internal set; } = null;
+
+        #region Permissions
+        internal bool IsPermitted(Permissions permissions) {
+            if ((permissions & Permissions.Everyone) == Permissions.Everyone) {
+                return true;
+            }
+            if (this.IsBroadcaster) {
+                return true;
+            }
+            if ((permissions & Permissions.Mods) == Permissions.Mods && this.IsModerator) {
+                return true;
+            }
+            if ((permissions & Permissions.VIPs) == Permissions.VIPs && this.IsVIP) {
+                return true;
+            }
+            if ((permissions & Permissions.Subscribers) == Permissions.Subscribers && this.IsSubscriber) {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }

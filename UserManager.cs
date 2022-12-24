@@ -9,6 +9,7 @@ using TwitchLib.Api.Helix.Models.Subscriptions;
 using TwitchLib.Client.Models;
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Models.Responses.Messages;
+using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
 using Twitchmata.Models;
 using UnityEngine;
 
@@ -17,6 +18,10 @@ namespace Twitchmata {
         internal ConnectionManager ConnectionManager;
         internal UserManager(ConnectionManager connectionManager){
             this.ConnectionManager = connectionManager;
+
+            this.FetchUserWithID(this.ConnectionManager.ConnectionConfig.ChannelID, (user) => {
+                user.IsBroadcaster = true;
+            });
         }
 
         private Dictionary<string, Models.User> UsersByID { get; set; } = new Dictionary<string, Models.User> {};
@@ -35,6 +40,19 @@ namespace Twitchmata {
                 }
             }
             return null;
+        }
+
+        public void FetchUserWithID(string userId, Action<Models.User> action) {
+            var task = this.ConnectionManager.API.Helix.Users.GetUsersAsync(new List<string> { userId });
+            TwitchManager.RunTask(task, obj => {
+                var users = obj.Users;
+                if (users.Length == 0) {
+                    action.Invoke(null);
+                    return;
+                }
+                var user = this.ExistingOrNewUser(users[0].Id, users[0].Login, users[0].DisplayName);
+                action.Invoke(user);
+            });
         }
 
         public void FetchUserWithUserName(string userName, Action<Models.User> action) {
@@ -101,8 +119,8 @@ namespace Twitchmata {
             return subscriber;
         }
 
-        internal Models.User UserForChannelPointsRedeem(RewardRedemption rewardRedemption) {
-            return this.ExistingOrNewUser(rewardRedemption.UserId, rewardRedemption.UserLogin, rewardRedemption.UserName); ;
+        internal Models.User UserForChannelPointsRedeem(Redemption rewardRedemption) {
+            return this.ExistingOrNewUser(rewardRedemption.User.Id, rewardRedemption.User.Login, rewardRedemption.User.DisplayName); ;
         }
 
         internal Models.User UserForChatMessage(ChatMessage chatMessage) {

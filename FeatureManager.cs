@@ -13,6 +13,10 @@ namespace Twitchmata {
 
         }
 
+        internal virtual void FinalizeInitialization() {
+
+        }
+
 
         #region Convenience Properties
         public string ChannelID {
@@ -37,6 +41,7 @@ namespace Twitchmata {
             this.InitializeFeatureManager();
             this.InitializePubSub(manager.PubSub);
             this.InitializeClient(manager.Client);
+            this.FinalizeInitialization();
         }
 
         internal virtual void InitializePubSub(PubSub pubSub)
