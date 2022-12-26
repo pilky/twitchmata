@@ -4,49 +4,52 @@ using System.IO;
 using UnityEngine;
 
 namespace Twitchmata {
-    public class Secrets {
-        public string RootPath { get; private set; }
-        public Secrets(string rootPath) {
+    internal class Secrets {
+        internal string RootPath { get; private set; }
+        internal Secrets(string rootPath) {
             this.RootPath = rootPath;
         }
 
-        public string ClientID() {
+        //TODO: Remove
+        internal string ClientID() {
             return this.ReadString("client_id.txt");
         }
 
-        public string ClientSecret() {
+        internal string ClientSecret() {
             return this.ReadString("client_secret.txt");
         }
 
-        public string BotAccessToken() {
+        internal string BotAccessToken() {
             return this.ReadString("bot_access_token.txt");
         }
 
-        public void SetBotAccessToken(string newToken) {
+        internal void SetBotAccessToken(string newToken) {
             this.WriteString(newToken, "bot_access_token.txt");
         }
 
-        public string BotRefreshToken() {
+        //TODO: Remove
+        internal string BotRefreshToken() {
             return this.ReadString("bot_refresh_token.txt");
         }
 
-        public void SetBotRefreshToken(string newToken) {
+        internal void SetBotRefreshToken(string newToken) {
             this.WriteString(newToken, "bot_refresh_token.txt");
         }
 
-        public string AccountAccessToken() {
+        internal string AccountAccessToken() {
             return this.ReadString("account_access_token.txt");
         }
 
-        public void SetAccountAccessToken(string newToken) {
+        internal void SetAccountAccessToken(string newToken) {
             this.WriteString(newToken, "account_access_token.txt");
         }
 
-        public string AccountRefreshToken() {
+        //TODO: Remove
+        internal string AccountRefreshToken() {
             return this.ReadString("account_refresh_token.txt");
         }
 
-        public void SetAccountRefreshToken(string newToken) {
+        internal void SetAccountRefreshToken(string newToken) {
             this.WriteString(newToken, "account_refresh_token.txt");
         }
 

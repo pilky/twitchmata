@@ -9,20 +9,28 @@ namespace Twitchmata {
     public class FeatureManager : MonoBehaviour {
         public ConnectionManager Manager;
 
-        public virtual void InitializeFeatureManager() {
-
-        }
-
-        internal virtual void FinalizeInitialization() {
-
-        }
+        #region Initialization
+        /// <summary>
+        /// Override this in a subclass to perform any initialisation
+        /// </summary>
+        /// <remarks>
+        /// This is where you would setup things such as chat commands and channel point rewards
+        /// </remarks>
+        public virtual void InitializeFeatureManager() {}
+        #endregion
 
 
         #region Convenience Properties
+        /// <summary>
+        /// The current channel ID
+        /// </summary>
         public string ChannelID {
             get { return this.Manager.ConnectionConfig.ChannelID; }
         }
 
+        /// <summary>
+        /// The current twitch API
+        /// </summary>
         public TwitchLib.Api.Helix.Helix HelixAPI {
             get { return this.Manager.API.Helix; }
         }
@@ -33,9 +41,13 @@ namespace Twitchmata {
         #endregion
 
 
+
+        /**************************************************
+         * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+         **************************************************/
+
         #region Internal Initialization
-        internal void InitializeWithAPIManager(ConnectionManager manager)
-        {
+        internal void InitializeWithAPIManager(ConnectionManager manager) {
             this.Manager = manager;
 
             this.InitializeFeatureManager();
@@ -44,15 +56,11 @@ namespace Twitchmata {
             this.FinalizeInitialization();
         }
 
-        internal virtual void InitializePubSub(PubSub pubSub)
-        {
+        internal virtual void FinalizeInitialization() { }
 
-        }
+        internal virtual void InitializePubSub(PubSub pubSub) { }
 
-        internal virtual void InitializeClient(Client client)
-        {
-
-        }
+        internal virtual void InitializeClient(Client client) { }
         #endregion
     }
 

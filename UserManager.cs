@@ -24,16 +24,27 @@ namespace Twitchmata {
             });
         }
 
+        #region User Management
         private Dictionary<string, Models.User> UsersByID { get; set; } = new Dictionary<string, Models.User> {};
 
-        public Models.User? UserWithID(string userID) {
+        /// <summary>
+        /// Get an existing user, if one exists
+        /// </summary>
+        /// <param name="userID">The user ID to find the user for</param>
+        /// <returns>A user, if that user exists locally</returns>
+        public Models.User UserWithID(string userID) {
             if (UsersByID.ContainsKey(userID)) { 
                 return UsersByID[userID];
             }
             return null;
         }
 
-        public Models.User? UserWithUserName(string userName) {
+        /// <summary>
+        /// Get an existing user, i fone exists
+        /// </summary>
+        /// <param name="userName">The username of to find the user for</param>
+        /// <returns>A user, if that user exists locally</returns>
+        public Models.User UserWithUserName(string userName) {
             foreach (var user in UsersByID.Values) {
                 if (user.UserName == userName) {
                     return user;
@@ -41,7 +52,15 @@ namespace Twitchmata {
             }
             return null;
         }
+        #endregion
 
+
+        #region User Fetching
+        /// <summary>
+        /// Fetch a user from the Twitch API
+        /// </summary>
+        /// <param name="userId">The ID of the user to fetch</param>
+        /// <param name="action">An action that accepts the user (or null if an error occured)</param>
         public void FetchUserWithID(string userId, Action<Models.User> action) {
             var task = this.ConnectionManager.API.Helix.Users.GetUsersAsync(new List<string> { userId });
             TwitchManager.RunTask(task, obj => {
@@ -55,6 +74,11 @@ namespace Twitchmata {
             });
         }
 
+        /// <summary>
+        /// Fetch a user from the Twitch API
+        /// </summary>
+        /// <param name="userName">The username of the user to fetch</param>
+        /// <param name="action">An action that accepts the user (or null if an error occured)</param>
         public void FetchUserWithUserName(string userName, Action<Models.User> action) {
             var task = this.ConnectionManager.API.Helix.Users.GetUsersAsync(null, new List<string> { userName });
             TwitchManager.RunTask(task, obj => {
@@ -67,7 +91,9 @@ namespace Twitchmata {
                 action.Invoke(user);
             });
         }
+        #endregion
 
+        #region Internal User-Creation Conveniences
         private Models.User ExistingOrNewUser(string userID, string userName, string displayName) {
             var user = this.UserWithID(userID);
             if (user == null) {
@@ -77,7 +103,7 @@ namespace Twitchmata {
             return user;
         }
 
-        internal Models.User? UserForBitsRedeem(OnBitsReceivedV2Args bitsRedeem) {
+        internal Models.User UserForBitsRedeem(OnBitsReceivedV2Args bitsRedeem) {
             if (bitsRedeem.IsAnonymous) {
                 return null;
             }
@@ -167,8 +193,10 @@ namespace Twitchmata {
             
             return user;
         }
+        #endregion
 
 
+        #region Fetching Initial User Info
         internal void FetchUserInfo() {
             this.FetchNextSubscribers();
             this.FetchNextVIPs();
@@ -209,8 +237,7 @@ namespace Twitchmata {
             });
         }
 
-        private void FetchNextModerators(string pagination = null)
-        {
+        private void FetchNextModerators(string pagination = null) {
             var task = this.ConnectionManager.API.Helix.Moderation.GetModeratorsAsync(this.ChannelID, null, UserManager.FetchSize, pagination);
             TwitchManager.RunTask(task, obj => {
                 var moderators = obj.Data;
@@ -223,6 +250,7 @@ namespace Twitchmata {
                 }
             });
         }
+        #endregion
     }
 }
 

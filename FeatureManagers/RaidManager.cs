@@ -9,8 +9,78 @@ using System.Threading.Tasks;
 using TwitchLib.PubSub.Events;
 
 namespace Twitchmata {
+    /// <summary>
+    /// Used to manage raids in your overlay
+    /// </summary>
+    /// <remarks>
+    /// To utilise RaidManager create a subclass and add to a GameObject (either the
+    /// GameObject holding TwitchManager or a child GameObject).
+    ///
+    /// Then override <code>RaidReceived()</code> and add your incoming-raid handling code.
+    /// </remarks>
     public class RaidManager : FeatureManager {
-        #region Client
+
+        #region Notifications
+        /// <summary>
+        /// Fired when another streamer raids your channel
+        /// </summary>
+        /// <param name="raid">Details of the incoming raid</param>
+        public virtual void RaidReceived(Models.IncomingRaid raid) {
+            Debug.Log($"{raid.Raider.DisplayName} raided with {raid.ViewerCount} viewers");
+        }
+        #endregion
+
+        #region Outgoing Raids
+        /// <summary>
+        /// Starts a raid to another streamer
+        /// </summary>
+        /// <remarks>
+        /// You will likely need to fetch the user to raid from the UserManager first
+        /// </remarks>
+        /// <param name="userToRaid">The user to raid</param>
+        /// <param name="action">An action called with details of the outgoing raid if it was successfully started</param>
+        public void StartRaid(Models.User userToRaid, Action<Models.OutgoingRaid> action) {
+            var task = this.HelixAPI.Raids.StartRaidAsync(this.ChannelID, userToRaid.UserId);
+            TwitchManager.RunTask(task, obj => {
+                var raid = obj.Data[0];
+                var outgoingRaid = new Models.OutgoingRaid() {
+                    RaidTarget = userToRaid,
+                    CreatedAt = raid.CreatedAt,
+                    IsMature = raid.IsMature,
+                };
+                action.Invoke(outgoingRaid);
+            });
+        }
+
+        /// <summary>
+        /// Cancel any currently pending raid
+        /// </summary>
+        /// <param name="action">An action called after the raid has been cancelled</param>
+        public void CancelRaid(Action action = null) {
+            var task = this.HelixAPI.Raids.CancelRaidAsync(this.ChannelID);
+            TwitchManager.RunTask(task, () => {
+                if (action != null) {
+                    action.Invoke();
+                }
+            });
+        }
+
+        #endregion
+
+        #region Stats
+        /// <summary>
+        /// List of raids that have come in while the overlay has been open
+        /// </summary>
+        public List<Models.IncomingRaid> RaidsThisStream { get; private set; } = new List<Models.IncomingRaid>() { };
+        #endregion
+
+
+
+        /**************************************************
+         * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+         **************************************************/
+
+        #region Internal (Client)
         override internal void InitializeClient(Client client) {
             Debug.Log("Setting Up Incoming Raid Notifications");
             client.OnRaidNotification -= Client_OnRaidNotification;
@@ -54,42 +124,6 @@ namespace Twitchmata {
         //private void PubSub_OnRaidUpdate(object sender, OnRaidUpdateV2Args e) {
         //    Debug.Log($"Raid updated {e.TargetDisplayName} {e.ViewerCount} {e.TargetProfileImage}");
         //}
-        #endregion
-
-
-        #region Notifications
-        public virtual void RaidReceived(Models.IncomingRaid raid) {
-            Debug.Log($"{raid.Raider.DisplayName} raided with {raid.ViewerCount} viewers");
-        }
-        #endregion
-
-        #region Outgoing Raids
-        public void StartRaid(Models.User userToRaid, Action<Models.OutgoingRaid> action) {
-            var task = this.HelixAPI.Raids.StartRaidAsync(this.ChannelID, userToRaid.UserId);
-            TwitchManager.RunTask(task, obj => {
-                var raid = obj.Data[0];
-                var outgoingRaid = new Models.OutgoingRaid() {
-                    RaidTarget = userToRaid,
-                    CreatedAt = raid.CreatedAt,
-                    IsMature = raid.IsMature,
-                };
-                action.Invoke(outgoingRaid);
-            });
-        }
-
-        public void CancelRaid(Action action = null) {
-            var task = this.HelixAPI.Raids.CancelRaidAsync(this.ChannelID);
-            TwitchManager.RunTask(task, () => {
-                if (action != null) {
-                    action.Invoke();
-                }
-            });
-        }
-
-        #endregion
-
-        #region Stats
-        public List<Models.IncomingRaid> RaidsThisStream { get; private set; } = new List<Models.IncomingRaid>() { };
         #endregion
     }
 }

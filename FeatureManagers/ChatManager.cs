@@ -8,8 +8,81 @@ using TwitchLib.Unity;
 using UnityEngine;
 
 namespace Twitchmata {
+    /// <summary>
+    /// Used to keep track of users in Chat
+    /// </summary>
     public class ChatManager : FeatureManager {
-        #region Client Handling
+        #region Chatters
+        /// <summary>
+        /// A list of users currently in chat (this is not a list of viewers)
+        /// </summary>
+        public Dictionary<string, Models.User> Chatters { get; private set; } = new Dictionary<string, Models.User>() { };
+
+        /// <summary>
+        /// Fired when a user sends their first message after joining the channel
+        /// </summary>
+        public virtual void ChatterJoined(Models.User chatter) {
+            Debug.Log("Chatter joined: "+ chatter.DisplayName);
+        }
+
+        /// <summary>
+        /// Fired when a user leaves the chat
+        /// </summary>
+        /// <param name="chatter"></param>
+        public virtual void ChatterLeft(Models.User chatter) {
+            Debug.Log("Chatter left: " + chatter.DisplayName);
+        }
+        #endregion
+
+        #region Moderator
+        /// <summary>
+        /// A list of moderators currently viewing the stream
+        /// </summary>
+        public Dictionary<string, Models.User> Moderators { get; private set; } = new Dictionary<string, Models.User>() { };
+
+        /// <summary>
+        /// Fired when a moderator joins the stream
+        /// </summary>
+        public virtual void ModeratorJoined(Models.User moderator) {
+            Debug.Log("Mod joined: " + moderator.DisplayName);
+        }
+
+        /// <summary>
+        /// Fired when a moderator leaves the stream
+        /// </summary>
+        public virtual void ModeratorLeft(Models.User moderator) {
+            Debug.Log("Mod left: " + moderator.DisplayName);
+        }
+        #endregion
+
+        #region VIPs
+        /// <summary>
+        /// A list of VIPs currently viewing the stream
+        /// </summary>
+        public Dictionary<string, Models.User> VIPs { get; private set; } = new Dictionary<string, Models.User>() { };
+
+        /// <summary>
+        /// Fired when a VIP joins the stream
+        /// </summary>
+        public virtual void VIPJoined(Models.User vip) {
+            Debug.Log("VIP joined: " + vip.DisplayName);
+        }
+
+        /// <summary>
+        /// Fired when a VIP leaves the stream
+        /// </summary>
+        public virtual void VIPLeft(Models.User vip) {
+            Debug.Log("VIP left: " + vip.DisplayName);
+        }
+        #endregion
+
+
+
+        /**************************************************
+         * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+         **************************************************/
+
+        #region Internal
         internal override void InitializeClient(Client client) {
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnUserJoined += Client_OnUserJoined;
@@ -62,39 +135,6 @@ namespace Twitchmata {
                 this.Moderators.Remove(e.Username);
                 this.ModeratorLeft(user);
             }
-        }
-        #endregion
-
-        #region Chatters
-        public Dictionary<string, Models.User> Chatters { get; private set; } = new Dictionary<string, Models.User>() { };
-        public virtual void ChatterJoined(Models.User chatter) {
-            Debug.Log("Chatter joined: "+ chatter.DisplayName);
-        }
-
-        public virtual void ChatterLeft(Models.User chatter) {
-            Debug.Log("Chatter left: " + chatter.DisplayName);
-        }
-        #endregion
-
-        #region Moderator
-        public Dictionary<string, Models.User> Moderators { get; private set; } = new Dictionary<string, Models.User>() { };
-        public virtual void ModeratorJoined(Models.User moderator) {
-            Debug.Log("Mod joined: " + moderator.DisplayName);
-        }
-
-        public virtual void ModeratorLeft(Models.User moderator) {
-            Debug.Log("Mod left: " + moderator.DisplayName);
-        }
-        #endregion
-
-        #region VIPs
-        public Dictionary<string, Models.User> VIPs { get; private set; } = new Dictionary<string, Models.User>() { };
-        public virtual void VIPJoined(Models.User vip) {
-            Debug.Log("VIPs joined: " + vip.DisplayName);
-        }
-
-        public virtual void VIPLeft(Models.User vip) {
-            Debug.Log("VIPs joined: " + vip.DisplayName);
         }
         #endregion
     }

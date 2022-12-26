@@ -14,43 +14,12 @@ using TwitchLib.Api.Auth;
 
 namespace Twitchmata {
     public class ConnectionManager {
-
         public PubSub PubSub { get; private set; }
         public Api API { get; private set; }
         public Client Client { get; private set; }
-        internal UserManager UserManager { get; private set; }
 
         public ConnectionConfig ConnectionConfig { get; private set; }
-        public Secrets Secrets { get; private set; }
 
-        public ConnectionManager(ConnectionConfig connectionConfig, Secrets secrets) {
-            this.ConnectionConfig = connectionConfig;
-            this.Secrets = secrets;
-            this.SetupAPIAndPubSub();
-            this.SetupClient();
-            this.UserManager = new UserManager(this);
-            this.UserManager.FetchUserInfo();
-        }
-
-        private void SetupClient() {
-            this.Client = new Client();
-            this.Client.OnIncorrectLogin += Client_OnIncorrectLogin;
-        }
-
-        private void SetupAPIAndPubSub() {
-            this.API = new Api();
-            this.API.Settings.ClientId = this.Secrets.ClientID();
-            this.API.Settings.AccessToken = this.Secrets.AccountAccessToken();
-
-            this.PubSub = new PubSub();
-            this.PubSub.OnListenResponse += PubSub_OnListenResponse;
-            this.PubSub.OnPubSubServiceConnected += PubSub_OnPubSubServiceConnected;
-            this.PubSub.OnPubSubServiceClosed += PubSub_OnPubSubServiceClosed;
-            this.PubSub.OnPubSubServiceError += PubSub_OnPubSubServiceError;
-        }
-
-
-        #region Connection
         /// <summary>
         /// Connect to PubSub and Chat Bot
         /// </summary>
@@ -66,6 +35,45 @@ namespace Twitchmata {
             this.PubSub.Disconnect();
             this.Client.Disconnect();
         }
+
+
+
+
+        /**************************************************
+         * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+         **************************************************/
+
+        internal UserManager UserManager { get; private set; }
+        internal Secrets Secrets { get; private set; }
+
+        internal ConnectionManager(ConnectionConfig connectionConfig, Secrets secrets) {
+            this.ConnectionConfig = connectionConfig;
+            this.Secrets = secrets;
+            this.SetupAPIAndPubSub();
+            this.SetupClient();
+            this.UserManager = new UserManager(this);
+            this.UserManager.FetchUserInfo();
+        }
+
+        private void SetupClient() {
+            this.Client = new Client();
+            this.Client.OnIncorrectLogin += Client_OnIncorrectLogin;
+        }
+
+        private void SetupAPIAndPubSub() {
+            this.API = new Api();
+            this.API.Settings.ClientId = this.ConnectionConfig.ClientID;
+            this.API.Settings.AccessToken = this.Secrets.AccountAccessToken();
+
+            this.PubSub = new PubSub();
+            this.PubSub.OnListenResponse += PubSub_OnListenResponse;
+            this.PubSub.OnPubSubServiceConnected += PubSub_OnPubSubServiceConnected;
+            this.PubSub.OnPubSubServiceClosed += PubSub_OnPubSubServiceClosed;
+            this.PubSub.OnPubSubServiceError += PubSub_OnPubSubServiceError;
+        }
+
+
+        #region Connection
 
         private void ConnectClient() {
             ConnectionCredentials credentials = new ConnectionCredentials(this.ConnectionConfig.BotName, this.Secrets.BotAccessToken());
@@ -162,6 +170,13 @@ namespace Twitchmata {
 
         #region Feature Managers
         public List<FeatureManager> FeatureManagers { get; private set; } = new List<FeatureManager>();
+        /// <summary>
+        /// Register a feature manager with the connectino manager.
+        /// </summary>
+        /// <remarks>
+        /// Usually this would be handled by TwitchManager but is provided in case you want to programtically register a feature manager
+        /// </remarks>
+        /// <param name="manager">The manager to register</param>
         public void RegisterFeatureManager(FeatureManager manager) {
             this.FeatureManagers.Add(manager);
             manager.InitializeWithAPIManager(this);
@@ -169,7 +184,7 @@ namespace Twitchmata {
         #endregion
 
 
-        //To move out
+        //TODO: move out of connection manager
         public async Task<string> GetAvatarURLForUser(string userID) {
             var user = new List<string> { userID };
             var users = await API.Helix.Users.GetUsersAsync(user);

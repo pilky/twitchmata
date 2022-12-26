@@ -9,7 +9,40 @@ using TwitchLib.Unity;
 using UnityEngine;
 
 namespace Twitchmata {
+    /// <summary>
+    /// Used to respond to chat commands in your overlay
+    /// </summary>
+    /// <remarks>
+    /// To utilise ChatCommandManager create a subclass and add to a GameObject (either the)
+    /// Game object holding TwitchManager or a child GameObject).
+    ///
+    /// See <code>RegisterChatCommand()</code> for details on how to set up commands
+    /// </remarks>
     public class ChatCommandManager : FeatureManager {
+        #region Command Registration
+        /// <summary>
+        /// Register a chat command that viewers can invoke
+        /// </summary>
+        /// <param name="command">The name of the command (excluding any command prefix such as !)</param>
+        /// <param name="permissions">Permissions for who can invoke the command</param>
+        /// <param name="callback">The delegate method to call when this command is invoked</param>
+        public void RegisterChatCommand(string command, Permissions permissions, ChatCommandCallback callback) {
+            this.RegisteredCommands[command] = new RegisteredChatCommand() {
+                Permissions = permissions,
+                Callback = callback,
+            };
+        }
+        #endregion
+
+
+
+        /**************************************************
+         * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+         **************************************************/
+
+        #region Internal
+        private Dictionary<string, RegisteredChatCommand> RegisteredCommands = new Dictionary<string, RegisteredChatCommand>();
+
         override internal void InitializeClient(Client client) {
             Debug.Log("Setting up Chat Command Manager");
             client.OnChatCommandReceived -= Client_OnChatCommandReceived;
@@ -33,15 +66,7 @@ namespace Twitchmata {
 
             registeredCommand.Callback.Invoke(command.ArgumentsAsList, user);
         }
-
-        #region Command Registration
-        private Dictionary<string, RegisteredChatCommand> RegisteredCommands = new Dictionary<string, RegisteredChatCommand>();
-        public void RegisterChatCommand(string command, Permissions permissions, ChatCommandCallback callback) {
-            this.RegisteredCommands[command] = new RegisteredChatCommand() {
-                Permissions = permissions,
-                Callback = callback,
-            };
-        }
         #endregion
+
     }
 }

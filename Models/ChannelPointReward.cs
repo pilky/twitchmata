@@ -4,16 +4,62 @@ using TwitchLib.Api.Helix.Models.ChannelPoints.CreateCustomReward;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
 
 namespace Twitchmata.Models {
+    /// <summary>
+    /// Delegate that is invoked when a channel point redemption is successful
+    /// </summary>
+    /// <param name="redemption">Details of the redemption</param>
     public delegate void RewardRedemptionCallback(ChannelPointRedemption redemption);
 
+    /// <summary>
+    /// Represents a reward created and managed by your Twitch overlay
+    /// </summary>
+    /// <remark>
+    /// Note: updating the properties of a ManagedReward after registering it will not
+    /// lead to any updates until the overlay is restarted. If you wish to update properties
+    /// while the overlay is running, please look at ChannelPointManager
+    /// </remark>
     public class ManagedReward {
-        public string? Id { get; internal set; }
+        /// <summary>
+        /// The Id of the reward
+        /// </summary>
+        /// <remarks>
+        /// This is set when the reward is fetched from the API
+        /// </remarks>
+        public string Id { get; internal set; }
 
+        /// <summary>
+        /// The title of the reward. Must be unique.
+        /// </summary>
+        /// <remarks>
+        /// This is used to fetch the reward from the API so should be unique and match a reward
+        /// that was created by Twitchmata.
+        ///
+        /// If a reward already exists with this title that wasn't created by your overlay then you 
+        /// will need to delete it on Twitch's website if you want to utilise managed features such
+        /// as auto-refunding, enabling/disabling, and updating cost.
+        /// 
+        /// If you don't care about the above features then consider an Unmanaged Reward
+        /// </remarks>
         public string Title { get; internal set; }
+
+        /// <summary>
+        /// The cost of the reward in channel points
+        /// </summary>
         public int Cost { get; internal set; }
+
+        /// <summary>
+        /// Whether the reward is enabled
+        /// </summary>
         public bool IsEnabled { get; internal set; }
+
+        /// <summary>
+        /// The permissions of who can use the reward
+        /// </summary>
         public Permissions Permissions { get; private set; }
 
+        /// <summary>
+        /// Creates a new managed reward. See the above properties for details on arguments.
+        /// </summary>
         public ManagedReward(string title, int cost, Permissions permissions = Permissions.Everyone, bool isEnabled = true) {
             this.Title = title;
             this.Cost = cost;
@@ -21,7 +67,40 @@ namespace Twitchmata.Models {
             this.Permissions = permissions;
         }
 
-        internal ManagedReward(CustomReward remoteReward) {
+        #region Extra Options
+
+        /// <summary>
+        /// If set, holds the maximum number of times this reward can be redeemed each stream
+        /// </summary>
+        public int? MaxPerStream { get; set; }
+
+        /// <summary>
+        /// If set, holds the maximum number of times a user can redeem this reward each stream
+        /// </summary>
+        public int? MaxPerUserPerStream { get; set; }
+
+        /// <summary>
+        /// If set, holds the minimum number of seconds between redeems of this reward
+        /// </summary>
+        public int? GlobalCooldownSeconds { get; set; }
+
+        /// <summary>
+        /// A description of what the reward does
+        /// </summary>
+        public string Description { get; set; } = "";
+
+        /// <summary>
+        /// Whether the user needs to enter input to redeem a reward
+        /// </summary>
+        public bool RequiresUserInput { get; set; } = false;
+
+        #endregion
+
+
+        #region Internal Helpers
+
+        internal ManagedReward(CustomReward remoteReward)
+        {
             this.Id = remoteReward.Id;
             this.Title = remoteReward.Title;
             this.Cost = remoteReward.Cost;
@@ -47,12 +126,6 @@ namespace Twitchmata.Models {
                 this.GlobalCooldownSeconds = null;
             }
         }
-
-        public int? MaxPerStream { get; set; }
-        public int? MaxPerUserPerStream { get; set; }
-        public int? GlobalCooldownSeconds { get; set; }
-        public string Description { get; set; } = "";
-        public bool RequiresUserInput { get; set; } = false;
 
         internal RewardRedemptionCallback Callback { get; set; }
 
@@ -128,6 +201,7 @@ namespace Twitchmata.Models {
             }
             return request;
         }
+        #endregion
     }
 }
 
