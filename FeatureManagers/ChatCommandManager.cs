@@ -44,7 +44,7 @@ namespace Twitchmata {
         private Dictionary<string, RegisteredChatCommand> RegisteredCommands = new Dictionary<string, RegisteredChatCommand>();
 
         override internal void InitializeClient(Client client) {
-            Debug.Log("Setting up Chat Command Manager");
+            Logger.LogInfo("Setting up Chat Command Manager");
             client.OnChatCommandReceived -= Client_OnChatCommandReceived;
             client.OnChatCommandReceived += Client_OnChatCommandReceived;
         }
@@ -59,7 +59,6 @@ namespace Twitchmata {
 
             var registeredCommand = this.RegisteredCommands[command.CommandText];
             if (user.IsPermitted(registeredCommand.Permissions) == false) {
-                this.Manager.Client.SendRaw(":tmi.twitch.tv NOTICE #pilkycrc :Here is a notice");
                 this.Manager.Client.SendMessage(this.Manager.ConnectionConfig.ChannelName, "You don't have permission to use this command");
                 return;
             }

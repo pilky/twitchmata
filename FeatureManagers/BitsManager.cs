@@ -23,7 +23,7 @@ namespace Twitchmata {
         /// </summary>
         /// <param name="bitsInfo">Info on the bits received</param>
         public virtual void ReceivedBits(Models.BitsRedemption bitsRedemption) {
-            Debug.Log($"Received {bitsRedemption.BitsUsed} Bits from {bitsRedemption.User.DisplayName}");
+            Logger.LogInfo($"Received {bitsRedemption.BitsUsed} Bits from {bitsRedemption.User.DisplayName}");
         }
         #endregion
 
@@ -43,6 +43,7 @@ namespace Twitchmata {
 
         #region Internal
         override internal void InitializePubSub(PubSub pubSub) {
+            Logger.LogInfo("Initialising BitsManager");
             pubSub.OnBitsReceivedV2 -= OnBitsReceived;
             pubSub.OnBitsReceivedV2 += OnBitsReceived;
             pubSub.ListenToBitsEventsV2(this.ChannelID);

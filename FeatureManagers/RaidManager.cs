@@ -26,7 +26,7 @@ namespace Twitchmata {
         /// </summary>
         /// <param name="raid">Details of the incoming raid</param>
         public virtual void RaidReceived(Models.IncomingRaid raid) {
-            Debug.Log($"{raid.Raider.DisplayName} raided with {raid.ViewerCount} viewers");
+            Logger.LogInfo($"{raid.Raider.DisplayName} raided with {raid.ViewerCount} viewers");
         }
         #endregion
 
@@ -82,7 +82,7 @@ namespace Twitchmata {
 
         #region Internal (Client)
         override internal void InitializeClient(Client client) {
-            Debug.Log("Setting Up Incoming Raid Notifications");
+            Logger.LogInfo("Setting Up Incoming Raid Notifications");
             client.OnRaidNotification -= Client_OnRaidNotification;
             client.OnRaidNotification += Client_OnRaidNotification;
         }

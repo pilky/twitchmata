@@ -26,9 +26,9 @@ namespace Twitchmata {
         /// <param name="subscriber"></param>
         public virtual void UserSubscribed(Models.User subscriber) {
             if (subscriber.Subscription.IsGift == true) {
-                Debug.Log($"{subscriber.DisplayName} received gift sub from {subscriber.Subscription.Gifter.DisplayName}");
-            } else { 
-                Debug.Log($"{subscriber.DisplayName} subscribed");
+                Logger.LogInfo($"{subscriber.DisplayName} received gift sub from {subscriber.Subscription.Gifter.DisplayName}");
+            } else {
+                Logger.LogInfo($"{subscriber.DisplayName} subscribed");
             }
         }
         #endregion
@@ -48,6 +48,7 @@ namespace Twitchmata {
 
         #region Internal
         override internal void InitializePubSub(PubSub pubSub) {
+            Logger.LogInfo("Setting up Subscriber Manager");
             pubSub.OnChannelSubscription -= PubSub_OnChannelSubscription;
             pubSub.OnChannelSubscription += PubSub_OnChannelSubscription;
             pubSub.ListenToSubscriptions(this.ChannelID);

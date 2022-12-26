@@ -22,7 +22,7 @@ namespace Twitchmata {
         /// Fired when a user sends their first message after joining the channel
         /// </summary>
         public virtual void ChatterJoined(Models.User chatter) {
-            Debug.Log("Chatter joined: "+ chatter.DisplayName);
+            Logger.LogInfo("Chatter joined: "+ chatter.DisplayName);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Twitchmata {
         /// </summary>
         /// <param name="chatter"></param>
         public virtual void ChatterLeft(Models.User chatter) {
-            Debug.Log("Chatter left: " + chatter.DisplayName);
+            Logger.LogInfo("Chatter left: " + chatter.DisplayName);
         }
         #endregion
 
@@ -44,14 +44,14 @@ namespace Twitchmata {
         /// Fired when a moderator joins the stream
         /// </summary>
         public virtual void ModeratorJoined(Models.User moderator) {
-            Debug.Log("Mod joined: " + moderator.DisplayName);
+            Logger.LogInfo("Mod joined: " + moderator.DisplayName);
         }
 
         /// <summary>
         /// Fired when a moderator leaves the stream
         /// </summary>
         public virtual void ModeratorLeft(Models.User moderator) {
-            Debug.Log("Mod left: " + moderator.DisplayName);
+            Logger.LogInfo("Mod left: " + moderator.DisplayName);
         }
         #endregion
 
@@ -65,14 +65,14 @@ namespace Twitchmata {
         /// Fired when a VIP joins the stream
         /// </summary>
         public virtual void VIPJoined(Models.User vip) {
-            Debug.Log("VIP joined: " + vip.DisplayName);
+            Logger.LogInfo("VIP joined: " + vip.DisplayName);
         }
 
         /// <summary>
         /// Fired when a VIP leaves the stream
         /// </summary>
         public virtual void VIPLeft(Models.User vip) {
-            Debug.Log("VIP left: " + vip.DisplayName);
+            Logger.LogInfo("VIP left: " + vip.DisplayName);
         }
         #endregion
 
@@ -84,6 +84,7 @@ namespace Twitchmata {
 
         #region Internal
         internal override void InitializeClient(Client client) {
+            Logger.LogInfo("Initializing Chat Manager");
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnUserJoined += Client_OnUserJoined;
             client.OnUserLeft += Client_OnUserLeft;

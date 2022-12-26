@@ -198,6 +198,7 @@ namespace Twitchmata {
 
         #region Fetching Initial User Info
         internal void FetchUserInfo() {
+            Logger.LogInfo("Fetching user info");
             this.FetchNextSubscribers();
             this.FetchNextVIPs();
             this.FetchNextModerators();

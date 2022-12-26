@@ -22,7 +22,7 @@ namespace Twitchmata {
         /// </summary>
         /// <param name="follower">A User object with details on the follower</param>
         public virtual void UserFollowed(Models.User follower) {
-            Debug.Log($"User followed: {follower.DisplayName}");
+            Logger.LogInfo($"User followed: {follower.DisplayName}");
         }
         #endregion
 
@@ -41,6 +41,7 @@ namespace Twitchmata {
 
         #region Internal
         override internal void InitializePubSub(PubSub pubSub) {
+            Logger.LogInfo("Initializing Follow Manager");
             pubSub.OnFollow -= PubSub_OnFollow;
             pubSub.OnFollow += PubSub_OnFollow;
             pubSub.ListenToFollows(this.ChannelID);

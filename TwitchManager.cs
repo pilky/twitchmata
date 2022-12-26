@@ -36,6 +36,7 @@ namespace Twitchmata {
         /// This is a useful method to hook up to a debug button to reset during stream if there are any connection issuers
         /// </remarks>
         public void Reset() {
+            Logger.LogInfo("Resetting connection");
             if (this.ConnectionManager != null) {
                 this.ConnectionManager.Disconnect();
             }
@@ -69,6 +70,8 @@ namespace Twitchmata {
         /// </remarks>
         [Tooltip("Location of secrets files on disk. Leave blank to use default.")]
         public string SecretsPath;
+
+        public LogLevel LogLevel = LogLevel.Error;
         #endregion
 
 
@@ -78,6 +81,10 @@ namespace Twitchmata {
          **************************************************/
 
         #region Connection Management (private)
+        TwitchManager() {
+            Logger.TwitchManager = this;
+        }
+
         private void Start() {
             if (this.SecretsPath == null || this.SecretsPath == "") {
                 this.SecretsPath = Application.persistentDataPath;
@@ -92,6 +99,10 @@ namespace Twitchmata {
 
             foreach (var manager in this.GetComponentsInChildren<FeatureManager>()) {
                 this.ConnectionManager.RegisterFeatureManager(manager);
+            }
+
+            if (this.ConnectionManager.FeatureManagers.Count == 0) {
+                Logger.LogWarning("No feature managers found");
             }
         }
         #endregion
@@ -110,7 +121,7 @@ namespace Twitchmata {
                         action(value);
                     });
                 } catch (Exception e) {
-                    Debug.LogError("Error getting result: " + e.Message);
+                    Logger.LogError("Error getting result: " + e.Message);
                 }
             });
         }
@@ -125,7 +136,7 @@ namespace Twitchmata {
                         action();
                     });
                 } catch (Exception e) {
-                    Debug.LogError("Error getting result: " + e.Message);
+                    Logger.LogError("Error getting result: " + e.Message);
                 }
             });
         }

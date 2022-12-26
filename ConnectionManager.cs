@@ -76,6 +76,7 @@ namespace Twitchmata {
         #region Connection
 
         private void ConnectClient() {
+            Logger.LogInfo("Connecting client: "+ this.ConnectionConfig.BotName);
             ConnectionCredentials credentials = new ConnectionCredentials(this.ConnectionConfig.BotName, this.Secrets.BotAccessToken());
             this.Client.Initialize(credentials, this.ConnectionConfig.ChannelName);
             foreach (FeatureManager manager in this.FeatureManagers) {
@@ -88,6 +89,7 @@ namespace Twitchmata {
 
         #region Access Tokens
         private void RefreshBotAccessToken() {
+            Logger.LogInfo("Refreshing Bot Access Token");
             var refreshToken = this.Secrets.BotRefreshToken();
             var clientSecret = this.Secrets.ClientSecret();
             var task = Task.Run(() => API.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret));
@@ -100,6 +102,7 @@ namespace Twitchmata {
         }
 
         private async Task<string> RefreshAccountAccessToken() {
+            Logger.LogInfo("Refreshing account access token");
             var refreshToken = this.Secrets.AccountRefreshToken();
             var clientSecret = this.Secrets.ClientSecret();
             var response = await API.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret);
@@ -113,7 +116,7 @@ namespace Twitchmata {
         #region Client Management
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs args) {
-            Debug.Log("Updating Bot Token");
+            Logger.LogInfo("Updating Bot Token");
             this.RefreshBotAccessToken();
         }
 
@@ -123,11 +126,12 @@ namespace Twitchmata {
         #region PubSub Management
         private void PubSub_OnListenResponse(object sender, OnListenResponseArgs args) {
             if (args.Successful == false) {
-                Debug.Log("PubSub Error: " + args.Response.Error);
                 if (args.Response.Error == "ERR_BADAUTH") {
                     if (this.IsResettingPubSub == false) {
                         this.ResetPubSub();
                     }
+                } else {
+                    Debug.LogError("PubSub Error: " + args.Response.Error);
                 }
             }
         }
@@ -135,6 +139,7 @@ namespace Twitchmata {
         private bool IsResettingPubSub = false;
 
         private void ResetPubSub() {
+            Logger.LogInfo("Resetting PubSub");
             this.IsResettingPubSub = true;
             var completionSource = new TaskCompletionSource<string>();
             Task.Run(async () => {
@@ -153,16 +158,16 @@ namespace Twitchmata {
         }
 
         private void PubSub_OnPubSubServiceConnected(object sender, System.EventArgs args) {
-            Debug.Log("Connected");
+            Logger.LogInfo("PubSub Connected");
             this.PubSub.SendTopics(this.Secrets.AccountAccessToken());
         }
 
         private void PubSub_OnPubSubServiceClosed(object sender, System.EventArgs args) {
-            Debug.Log("Closed");
+            Logger.LogInfo("PubSub Closed");
         }
 
         private void PubSub_OnPubSubServiceError(object sender, OnPubSubServiceErrorArgs args) {
-            Debug.Log("Pub Sub Error: " + args.Exception.Message);
+            Logger.LogError("PubSub Error: " + args.Exception.Message);
         }
 
         #endregion

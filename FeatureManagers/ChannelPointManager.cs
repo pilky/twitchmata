@@ -76,6 +76,7 @@ namespace Twitchmata {
             var task = this.HelixAPI.ChannelPoints.UpdateCustomRewardAsync(this.ChannelID, reward.Id, request);
             TwitchManager.RunTask(task, (response) => {
                 reward.IsEnabled = true;
+                Logger.LogInfo("Enabled reward '" + reward.Title + "'");
             });
         }
 
@@ -92,6 +93,7 @@ namespace Twitchmata {
             var task = this.HelixAPI.ChannelPoints.UpdateCustomRewardAsync(this.ChannelID, reward.Id, request);
             TwitchManager.RunTask(task, (response) => {
                 reward.IsEnabled = false;
+                Logger.LogInfo("Disabled reward '" + reward.Title + "'");
             });
         }
 
@@ -109,6 +111,7 @@ namespace Twitchmata {
             var task = this.HelixAPI.ChannelPoints.UpdateCustomRewardAsync(this.ChannelID, reward.Id, request);
             TwitchManager.RunTask(task, (response) => {
                 reward.Cost = newCost;
+                Logger.LogInfo("Updated cost of reward '" + reward.Title + "' to " + newCost);
             });
         }
         #endregion
@@ -121,7 +124,7 @@ namespace Twitchmata {
 
         #region Internal
         override internal void InitializePubSub(PubSub pubSub) {
-            Debug.Log("Setting up Channel Points");
+            Logger.LogInfo("Setting up Channel Points");
             pubSub.OnChannelPointsRewardRedeemed -= PubSub_OnChannelPointsRewardRedeemed;
             pubSub.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
             pubSub.ListenToChannelPoints(this.ChannelID);
@@ -140,7 +143,6 @@ namespace Twitchmata {
                 return;
             }
 
-            Debug.Log("Managed reward found: " + apiRedemption.Reward.Title);
             if (this.ManagedRewardsByID.ContainsKey(apiRedemption.Reward.Id) == false) {
                 return;
             }
@@ -148,7 +150,7 @@ namespace Twitchmata {
             var reward = this.ManagedRewardsByID[apiRedemption.Reward.Id];
 
             if (redemption.User.IsPermitted(reward.Permissions) == false) {
-                Debug.Log("User not permitted");
+                Logger.LogInfo("User not permitted");
                 this.UpdateRedemptionStatus(apiRedemption, CustomRewardRedemptionStatus.CANCELED);
                 return;
             }
@@ -183,6 +185,7 @@ namespace Twitchmata {
                 var id = response.Data[0].Id;
                 reward.Id = id;
                 this.ManagedRewardsByID[id] = reward;
+                Logger.LogInfo("Created reward '" + reward.Title + "'");
             });
         }
 
@@ -195,7 +198,7 @@ namespace Twitchmata {
 
             var task = this.HelixAPI.ChannelPoints.UpdateCustomRewardAsync(this.ChannelID, localReward.Id, updateRequest);
             TwitchManager.RunTask(task, (response) => {
-                Debug.Log("Updated custom reward: " + response);
+                Logger.LogInfo("Updated custom reward: " + response);
             });
         }
 
@@ -230,7 +233,7 @@ namespace Twitchmata {
             var statusRequest = new UpdateCustomRewardRedemptionStatusRequest() { Status = newStatus };
             var task = this.HelixAPI.ChannelPoints.UpdateRedemptionStatusAsync(this.ChannelID, redemption.Reward.Id, new List<string>() { redemption.Id}, statusRequest);
             TwitchManager.RunTask(task, (obj) => {
-                Debug.Log("Updated to status: "+ obj.Data[0].Status);
+                Logger.LogInfo("Updated to status: "+ obj.Data[0].Status);
             });
         }
         #endregion

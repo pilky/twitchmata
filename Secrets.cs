@@ -10,7 +10,6 @@ namespace Twitchmata {
             this.RootPath = rootPath;
         }
 
-        //TODO: Remove
         internal string ClientID() {
             return this.ReadString("client_id.txt");
         }
