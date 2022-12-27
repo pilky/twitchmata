@@ -60,9 +60,9 @@ namespace Twitchmata {
          **************************************************/
 
         internal UserManager UserManager { get; private set; }
-        internal Secrets Secrets { get; private set; }
+        internal Persistence Secrets { get; private set; }
 
-        internal ConnectionManager(ConnectionConfig connectionConfig, Secrets secrets) {
+        internal ConnectionManager(ConnectionConfig connectionConfig, Persistence secrets) {
             this.ConnectionConfig = connectionConfig;
             this.Secrets = secrets;
             this.SetupAPIAndPubSub();
@@ -78,7 +78,7 @@ namespace Twitchmata {
         private void SetupAPIAndPubSub() {
             this.API = new Api();
             this.API.Settings.ClientId = this.ConnectionConfig.ClientID;
-            this.API.Settings.AccessToken = this.Secrets.AccountAccessToken();
+            this.API.Settings.AccessToken = this.Secrets.AccountAccessToken;
 
             this.PubSub = new PubSub();
             this.PubSub.OnListenResponse += PubSub_OnListenResponse;
@@ -92,7 +92,7 @@ namespace Twitchmata {
 
         private void ConnectClient() {
             Logger.LogInfo("Connecting client: "+ this.ConnectionConfig.BotName);
-            ConnectionCredentials credentials = new ConnectionCredentials(this.ConnectionConfig.BotName, this.Secrets.BotAccessToken());
+            ConnectionCredentials credentials = new ConnectionCredentials(this.ConnectionConfig.BotName, this.Secrets.BotAccessToken);
             this.Client.Initialize(credentials, this.ConnectionConfig.ChannelName);
             foreach (FeatureManager manager in this.FeatureManagers) {
                 manager.InitializeClient(this.Client);
@@ -102,37 +102,11 @@ namespace Twitchmata {
 
         #endregion
 
-        #region Access Tokens
-        private void RefreshBotAccessToken() {
-            Logger.LogInfo("Refreshing Bot Access Token");
-            var refreshToken = this.Secrets.BotRefreshToken();
-            var clientSecret = this.Secrets.ClientSecret();
-            var task = Task.Run(() => API.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret));
-            task.Wait();
-            var response = task.Result;
-            this.Secrets.SetBotAccessToken(response.AccessToken);
-            this.Secrets.SetBotRefreshToken(response.RefreshToken);
-            this.SetupClient();
-            this.ConnectClient();
-        }
-
-        private async Task<string> RefreshAccountAccessToken() {
-            Logger.LogInfo("Refreshing account access token");
-            var refreshToken = this.Secrets.AccountRefreshToken();
-            var clientSecret = this.Secrets.ClientSecret();
-            var response = await API.Auth.RefreshAuthTokenAsync(refreshToken, clientSecret);
-            this.Secrets.SetAccountAccessToken(response.AccessToken);
-            this.Secrets.SetAccountRefreshToken(response.RefreshToken);
-            return response.AccessToken;
-        }
-        #endregion
-
 
         #region Client Management
 
         private void Client_OnIncorrectLogin(object sender, OnIncorrectLoginArgs args) {
-            Logger.LogInfo("Updating Bot Token");
-            this.RefreshBotAccessToken();
+            Logger.LogError("Invalid bot login, need to re-authenticate");
         }
 
         #endregion
@@ -142,39 +116,16 @@ namespace Twitchmata {
         private void PubSub_OnListenResponse(object sender, OnListenResponseArgs args) {
             if (args.Successful == false) {
                 if (args.Response.Error == "ERR_BADAUTH") {
-                    if (this.IsResettingPubSub == false) {
-                        this.ResetPubSub();
-                    }
+                    Debug.Log("Invalid account login, need to re-authenticate");
                 } else {
                     Debug.LogError("PubSub Error: " + args.Response.Error);
                 }
             }
         }
 
-        private bool IsResettingPubSub = false;
-
-        private void ResetPubSub() {
-            Logger.LogInfo("Resetting PubSub");
-            this.IsResettingPubSub = true;
-            var completionSource = new TaskCompletionSource<string>();
-            Task.Run(async () => {
-                completionSource.SetResult(await this.RefreshAccountAccessToken());
-            });
-
-            completionSource.Task.ConfigureAwait(true).GetAwaiter().OnCompleted(() => {
-                this.API.Settings.AccessToken = completionSource.Task.Result;
-                this.PubSub.Disconnect();
-                this.PubSub.Connect();
-                foreach (FeatureManager manager in this.FeatureManagers) {
-                    manager.InitializeWithAPIManager(this);
-                }
-                this.IsResettingPubSub = false;
-            });
-        }
-
         private void PubSub_OnPubSubServiceConnected(object sender, System.EventArgs args) {
             Logger.LogInfo("PubSub Connected");
-            this.PubSub.SendTopics(this.Secrets.AccountAccessToken());
+            this.PubSub.SendTopics(this.Secrets.AccountAccessToken);
         }
 
         private void PubSub_OnPubSubServiceClosed(object sender, System.EventArgs args) {

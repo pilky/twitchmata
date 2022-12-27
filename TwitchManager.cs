@@ -41,7 +41,7 @@ namespace Twitchmata {
                 this.ConnectionManager.Disconnect();
             }
 
-            this.ConnectionManager = new ConnectionManager(this.ConnectionConfig, new Secrets(this.SecretsPath));
+            this.ConnectionManager = new ConnectionManager(this.ConnectionConfig, new Persistence(this.PersistencePath));
             this.ConnectionManager.PerformSetup(() => {
                 this.DiscoverFeatureManagers();
                 this.ConnectionManager.Connect();
@@ -62,16 +62,16 @@ namespace Twitchmata {
         };
 
         /// <summary>
-        /// The location on disk where secrets are stored.
+        /// The location on disk where files are stored.
         /// </summary>
         /// 
         /// <remarks>
-        /// Note: secrets are stored in *plain text*. This is not secure but Unity does not provide a reliable way to store such secrets.
+        /// Note: any files are stored in *plain text*. This is not secure for auth tokens but Unity does not provide a reliable way to store such secrets.
         /// In practice it's only an issue if a malicious actor gets onto your system and finds the authentication, but this is why you
         /// should keep the scopes you use in your authentication token to the minimum required.
         /// </remarks>
-        [Tooltip("Location of secrets files on disk. Leave blank to use default.")]
-        public string SecretsPath;
+        [Tooltip("Location of files on disk. Leave blank to use default.")]
+        public string PersistencePath;
 
         public LogLevel LogLevel = LogLevel.Error;
         #endregion
@@ -94,8 +94,8 @@ namespace Twitchmata {
         }
 
         private void Start() {
-            if (this.SecretsPath == null || this.SecretsPath == "") {
-                this.SecretsPath = Application.persistentDataPath;
+            if (this.PersistencePath == null || this.PersistencePath == "") {
+                this.PersistencePath = Application.persistentDataPath;
             }
             this.Reset();
         }

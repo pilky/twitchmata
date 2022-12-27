@@ -4,11 +4,12 @@ using System.IO;
 using UnityEngine;
 
 namespace Twitchmata {
-    internal class Secrets {
+    public class Persistence {
         internal string RootPath { get; private set; }
-        internal Secrets(string rootPath) {
+        public Persistence(string rootPath) {
             this.RootPath = rootPath;
             Directory.CreateDirectory(rootPath + "/channels/");
+            Directory.CreateDirectory(rootPath + "/auth/");
         }
 
         internal string ChannelIDForChannel(string channelName) {
@@ -23,44 +24,15 @@ namespace Twitchmata {
             this.WriteString(channelID, "channels/" + channelName + ".txt");
         }
 
-        internal string ClientSecret() {
-            return this.ReadString("keys/client_secret.txt");
+        public string BotAccessToken {
+            get { return this.ReadString("auth/bot_access_token.txt"); }
+            set { this.WriteString(value, "auth/bot_access_token.txt"); }
         }
 
-        internal string BotAccessToken() {
-            return this.ReadString("keys/bot_access_token.txt");
+        public string AccountAccessToken {
+            get { return this.ReadString("auth/account_access_token.txt"); }
+            set { this.WriteString(value, "auth/account_access_token.txt"); }
         }
-
-        internal void SetBotAccessToken(string newToken) {
-            this.WriteString(newToken, "keys/bot_access_token.txt");
-        }
-
-        //TODO: Remove
-        internal string BotRefreshToken() {
-            return this.ReadString("keys/bot_refresh_token.txt");
-        }
-
-        internal void SetBotRefreshToken(string newToken) {
-            this.WriteString(newToken, "keys/bot_refresh_token.txt");
-        }
-
-        internal string AccountAccessToken() {
-            return this.ReadString("keys/account_access_token.txt");
-        }
-
-        internal void SetAccountAccessToken(string newToken) {
-            this.WriteString(newToken, "keys/account_access_token.txt");
-        }
-
-        //TODO: Remove
-        internal string AccountRefreshToken() {
-            return this.ReadString("keys/account_refresh_token.txt");
-        }
-
-        internal void SetAccountRefreshToken(string newToken) {
-            this.WriteString(newToken, "keys/account_refresh_token.txt");
-        }
-
 
         //MARK: - Helpers
         private string ReadString(string name) {

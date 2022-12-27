@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:GroupBox text="Twitchmata Setup" style="-unity-font-style: bold;">
+        <ui:Label tabindex="-1" text="Before authenticating, make sure you have set up Twitchmata in Unity. You can find instructions on how to set up at https://github.com/pilky/twitchmata&#10;" display-tooltip-when-elided="true" name="Setup_Info_Label" style="-unity-font-style: normal; -unity-text-align: upper-left; white-space: normal;" />
+    </ui:GroupBox>
+    <ui:GroupBox text="Authenticate Channel" style="-unity-font-style: bold; margin-left: 5px; margin-right: 5px; padding-top: 10px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; padding-left: 5px; padding-right: 5px;">
+        <ui:Label tabindex="-1" text="1. Click the button below to authenticate your channel. This will open Twitch in a browser window. Log in to your channel account and click &quot;Authorise&quot;." display-tooltip-when-elided="true" style="-unity-font-style: normal; white-space: normal; margin-bottom: 5px;" />
+        <ui:Button tabindex="-1" text="Authenticate Channel with Twitch" display-tooltip-when-elided="true" name="authenticate_channel" />
+        <ui:Label tabindex="-1" text="2. Copy the URL from the address bar of your browser and paste in the text field below" display-tooltip-when-elided="true" style="-unity-font-style: normal; white-space: normal; margin-top: 10px; margin-bottom: 5px;" />
+        <ui:TextField picking-mode="Ignore" name="channel_auth_field" />
+        <ui:Button tabindex="-1" text="Save Channel Auth" display-tooltip-when-elided="true" name="save_channel_auth" style="margin-top: 8px;" />
+    </ui:GroupBox>
+    <ui:GroupBox text="Authenticate Chat Bot (optional)" style="-unity-font-style: bold; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); padding-top: 10px; margin-left: 5px; margin-right: 5px; margin-top: 15px; padding-left: 5px; padding-right: 5px;">
+        <ui:Label tabindex="-1" text="While you can use your channel&apos;s account for chat communication it is highly recommended that you have a separate chat bot account. If you do, then follow the steps below." display-tooltip-when-elided="true" style="-unity-font-style: italic; white-space: normal; margin-bottom: 10px;" />
+        <ui:Label tabindex="-1" text="1. Click the button below to authenticate your chat bot. This will open Twitch in a browser window. Log in to your chat bot account and click &quot;Authorise&quot;." display-tooltip-when-elided="true" style="-unity-font-style: normal; white-space: normal; margin-bottom: 5px;" />
+        <ui:Button tabindex="-1" text="Authenticate Chat Bot with Twitch" display-tooltip-when-elided="true" name="authenticate_chat_bot" />
+        <ui:Label tabindex="-1" text="2. Copy the URL from the address bar of your browser and paste below to complete authentication" display-tooltip-when-elided="true" style="-unity-font-style: normal; white-space: normal; margin-top: 10px; margin-bottom: 5px;" />
+        <ui:TextField picking-mode="Ignore" name="bot_auth_field" />
+        <ui:Button tabindex="-1" text="Save Bot Auth" display-tooltip-when-elided="true" name="save_bot_auth" style="margin-top: 8px;" />
+    </ui:GroupBox>
+    <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="error_label" style="white-space: normal; -unity-text-align: upper-center; margin-top: 5px; margin-bottom: 5px; color: rgb(245, 0, 0); -unity-font-style: bold-and-italic;" />
+</ui:UXML>
