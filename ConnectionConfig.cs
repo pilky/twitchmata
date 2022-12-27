@@ -19,9 +19,6 @@ namespace Twitchmata {
         [Tooltip("The name of the channel you're broadcasting from")]
         public string ChannelName;
 
-        //TODO: Remove this, not needed
-        public string ChannelID;
-
         /// <summary>
         /// The name of the bot to use when communicating with chat
         /// </summary>

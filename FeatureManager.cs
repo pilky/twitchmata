@@ -25,7 +25,7 @@ namespace Twitchmata {
         /// The current channel ID
         /// </summary>
         public string ChannelID {
-            get { return this.Manager.ConnectionConfig.ChannelID; }
+            get { return this.Manager.ChannelID; }
         }
 
         /// <summary>

@@ -42,8 +42,10 @@ namespace Twitchmata {
             }
 
             this.ConnectionManager = new ConnectionManager(this.ConnectionConfig, new Secrets(this.SecretsPath));
-            this.DiscoverFeatureManagers();
-            this.ConnectionManager.Connect();
+            this.ConnectionManager.PerformSetup(() => {
+                this.DiscoverFeatureManagers();
+                this.ConnectionManager.Connect();
+            });
         }
         #endregion
 
@@ -55,7 +57,6 @@ namespace Twitchmata {
         public ConnectionConfig ConnectionConfig = new ConnectionConfig() {
             ClientID = "",
             ChannelName = "",
-            ChannelID = "",
             BotName = "",
         };
 

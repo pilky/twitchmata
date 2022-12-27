@@ -11,6 +11,7 @@ using TwitchLib.Client.Events;
 using System.Threading.Tasks;
 using TwitchLib.PubSub.Models.Responses;
 using TwitchLib.Api.Auth;
+using System;
 
 namespace Twitchmata {
     public class ConnectionManager {
@@ -20,10 +21,18 @@ namespace Twitchmata {
 
         public ConnectionConfig ConnectionConfig { get; private set; }
 
+        public string ChannelID {
+            get { return this.UserManager.BroadcasterID; }
+        }
+
         /// <summary>
         /// Connect to PubSub and Chat Bot
         /// </summary>
         public void Connect() {
+            if (this.ChannelID == null) {
+                Logger.LogError("Channel ID not set, did you forget to call PerformSetup()?");
+                return;
+            }
             this.PubSub.Connect();
             this.ConnectClient();
         }
@@ -36,6 +45,13 @@ namespace Twitchmata {
             this.Client.Disconnect();
         }
 
+        /// <summary>
+        /// This must be called after initialising a connection manager but before calling any APIs or connecting
+        /// </summary>
+        /// <param name="callback">Action that is called when it is safe to use the ConnectionManager</param>
+        public void PerformSetup(Action callback) {
+            this.UserManager.PerformSetup(callback);
+        }
 
 
 
@@ -52,7 +68,6 @@ namespace Twitchmata {
             this.SetupAPIAndPubSub();
             this.SetupClient();
             this.UserManager = new UserManager(this);
-            this.UserManager.FetchUserInfo();
         }
 
         private void SetupClient() {

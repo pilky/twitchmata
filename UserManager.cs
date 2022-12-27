@@ -18,10 +18,6 @@ namespace Twitchmata {
         internal ConnectionManager ConnectionManager;
         internal UserManager(ConnectionManager connectionManager){
             this.ConnectionManager = connectionManager;
-
-            this.FetchUserWithID(this.ConnectionManager.ConnectionConfig.ChannelID, (user) => {
-                user.IsBroadcaster = true;
-            });
         }
 
         #region User Management
@@ -92,6 +88,12 @@ namespace Twitchmata {
             });
         }
         #endregion
+
+
+
+        /**************************************************
+        * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+        **************************************************/
 
         #region Internal User-Creation Conveniences
         private Models.User ExistingOrNewUser(string userID, string userName, string displayName) {
@@ -197,6 +199,30 @@ namespace Twitchmata {
 
 
         #region Fetching Initial User Info
+        internal string BroadcasterID { get; private set; }
+        internal void PerformSetup(Action callback) {
+            var channelName = this.ConnectionManager.ConnectionConfig.ChannelName;
+            var channelID = this.ConnectionManager.Secrets.ChannelIDForChannel(channelName);
+            if (channelID != null && channelID.Length > 0) {
+                this.BroadcasterID = channelID;
+                callback.Invoke();
+                this.FetchUserInfo();
+                this.FetchUserWithID(channelID, (user) => {
+                    user.IsBroadcaster = true;
+                });
+                return;
+            }
+
+            this.FetchUserWithUserName(channelName, (user) => {
+                user.IsBroadcaster = true;
+                this.ConnectionManager.Secrets.SetChannelIDForChannel(channelName, user.UserId);
+                this.BroadcasterID = user.UserId;
+                callback.Invoke();
+                this.FetchUserInfo();
+            });
+        } 
+
+
         internal void FetchUserInfo() {
             Logger.LogInfo("Fetching user info");
             this.FetchNextSubscribers();
@@ -205,7 +231,7 @@ namespace Twitchmata {
         }
 
         private string ChannelID {
-            get { return this.ConnectionManager.ConnectionConfig.ChannelID; }
+            get { return this.ConnectionManager.ChannelID; }
         }
 
         private static int FetchSize = 100;
