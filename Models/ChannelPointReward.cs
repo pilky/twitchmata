@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TwitchLib.Api.Helix.Models.ChannelPoints;
 using TwitchLib.Api.Helix.Models.ChannelPoints.CreateCustomReward;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
@@ -93,6 +94,15 @@ namespace Twitchmata.Models {
         /// Whether the user needs to enter input to redeem a reward
         /// </summary>
         public bool RequiresUserInput { get; set; } = false;
+
+        /// <summary>
+        /// A list of valid inputs if the reward requires user input. Leave empty if any input is valid
+        /// </summary>
+        /// <remarks>
+        /// If an invalid input is entered the channel points will be refunded.
+        /// Ensure you use lower case values for inputs
+        /// </remarks>
+        public List<string> ValidInputs { get; set; } = new List<string>();
 
         #endregion
 

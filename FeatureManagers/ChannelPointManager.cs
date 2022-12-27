@@ -155,6 +155,12 @@ namespace Twitchmata {
                 return;
             }
 
+            if (reward.RequiresUserInput && reward.ValidInputs.Count > 0 && reward.ValidInputs.Contains(redemption.UserInput.ToLower()) == false) {
+                Logger.LogInfo("Invalid input entered: " + redemption.UserInput);
+                this.UpdateRedemptionStatus(apiRedemption, CustomRewardRedemptionStatus.CANCELED);
+                return;
+            }
+
             //Just make extra sure we don't redeem
             if (apiRedemption.Status == "CANCELED") {
                 return;
