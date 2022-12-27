@@ -45,6 +45,7 @@ namespace Twitchmata {
             this.ConnectionManager.PerformSetup(() => {
                 this.DiscoverFeatureManagers();
                 this.ConnectionManager.Connect();
+                this.Utilities.ConnectionManager = this.ConnectionManager;
             });
         }
         #endregion
@@ -76,6 +77,12 @@ namespace Twitchmata {
         #endregion
 
 
+        #region Utilities
+
+        public Utilities Utilities = new Utilities();
+
+        #endregion
+
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
@@ -95,10 +102,12 @@ namespace Twitchmata {
 
         private void DiscoverFeatureManagers() {
             foreach (var manager in this.GetComponents<FeatureManager>()) {
+                manager.Manager = this;
                 this.ConnectionManager.RegisterFeatureManager(manager);
             }
 
             foreach (var manager in this.GetComponentsInChildren<FeatureManager>()) {
+                manager.Manager = this;
                 this.ConnectionManager.RegisterFeatureManager(manager);
             }
 

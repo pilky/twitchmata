@@ -202,17 +202,5 @@ namespace Twitchmata {
             manager.InitializeWithAPIManager(this);
         }
         #endregion
-
-
-        //TODO: move out of connection manager
-        public async Task<string> GetAvatarURLForUser(string userID) {
-            var user = new List<string> { userID };
-            var users = await API.Helix.Users.GetUsersAsync(user);
-
-            if (users == null || users.Users.Length == 0) {
-                return "";
-            }
-            return users.Users[0].ProfileImageUrl;
-        }
     }
 }

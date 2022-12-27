@@ -7,7 +7,8 @@ using System;
 namespace Twitchmata {
 
     public class FeatureManager : MonoBehaviour {
-        public ConnectionManager Manager;
+        public ConnectionManager Connection;
+        public TwitchManager Manager;
 
         #region Initialization
         /// <summary>
@@ -25,18 +26,18 @@ namespace Twitchmata {
         /// The current channel ID
         /// </summary>
         public string ChannelID {
-            get { return this.Manager.ChannelID; }
+            get { return this.Connection.ChannelID; }
         }
 
         /// <summary>
         /// The current twitch API
         /// </summary>
         public TwitchLib.Api.Helix.Helix HelixAPI {
-            get { return this.Manager.API.Helix; }
+            get { return this.Connection.API.Helix; }
         }
 
         internal UserManager UserManager {
-            get { return this.Manager.UserManager; }
+            get { return this.Connection.UserManager; }
         }
         #endregion
 
@@ -48,8 +49,7 @@ namespace Twitchmata {
 
         #region Internal Initialization
         internal void InitializeWithAPIManager(ConnectionManager manager) {
-            this.Manager = manager;
-
+            this.Connection = manager;
             this.InitializeFeatureManager();
             this.InitializePubSub(manager.PubSub);
             this.InitializeClient(manager.Client);

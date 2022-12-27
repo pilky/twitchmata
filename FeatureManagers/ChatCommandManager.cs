@@ -59,7 +59,7 @@ namespace Twitchmata {
 
             var registeredCommand = this.RegisteredCommands[command.CommandText];
             if (user.IsPermitted(registeredCommand.Permissions) == false) {
-                this.Manager.Client.SendMessage(this.Manager.ConnectionConfig.ChannelName, "You don't have permission to use this command");
+                this.Connection.Client.SendMessage(this.Connection.ConnectionConfig.ChannelName, "You don't have permission to use this command");
                 return;
             }
 
