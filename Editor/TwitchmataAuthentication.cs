@@ -9,7 +9,7 @@ using Twitchmata;
 namespace Twitchmata {
     public class TwitchmataAuthentication : EditorWindow {
 
-        [MenuItem("Window/Twitchmata/Authenticate")]
+        [MenuItem("Window/Twitchmata/Authenticate"), MenuItem("CONTEXT/TwitchManager/Twitchmata/Authenticate")]
         public static void ShowWindow() {
             var window = GetWindow<TwitchmataAuthentication>();
             window.titleContent = new GUIContent("Authenticate Twitchmata");

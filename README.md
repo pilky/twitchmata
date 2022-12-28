@@ -1,40 +1,59 @@
-#Twitchmata
+# Twitchmata
 
-This is a set of files to help simplify integrating Twitch with an Animata VIPO stream built in Unity. It is built upon [TwitchLib](https://github.com/TwitchLib) so you will first need to include that in your Unity project.
+Twitchmata is a library to help you integrate an Animata/VIPO stream overlay with Unity. 
 
-This is currently a work in progress so is missing documentation and functionality. The hope is that it can be built upon to provide all the functionality streamers need.
-
-
-##Setup
-
-Currently you need to create your authentication tokens, refresh tokens, and client secrets manually at first and save them to text files on disk (you can find the names of the files in `Secrets.cs`). You then need to add your channel name, id, and the path to the folder containing the secrets files to `Config.cs`
+Twitchmata has been tested on Unity 2022.1+
 
 
-##Using
+## What is an Animata/VIPO Stream Overlay?
 
-Most of the functionality you'll need are in the Feature Managers. Currently there are managers for Bits, Raids, Followers, Subscribers, Chat Commands, and Channel Points. 
+Animata are a type of VTuber, virtual stream avatars common on Twitch. Animata are more akin to puppets, often controlled with a game controller, and they exist in a VIPO: **Virtual Interactive Puppet Overlay**. A VIPO is a virtual environment, often built in a game engine, which an Animata can move around in and interact with. They also provide interactivity to viewers, responding to various events on Twitch, which is where Twitchmata comes in.
 
-If you look at the classes you'll see some `public virtual` methods. The intention is you subclass the Feature Managers you need and override these methods. The Feature Managers are `MonoBehaviours` so you should add these to a game object (ideally one that persists). This allows you to easily connect up other game objects and hook into the unity update cycle if needed.
 
-At this point you should be able to instantiate a `TwitchManager`, usually in your main script. You then need to fetch the feature managers (usually by doing `var featureManager = gameObjectWithManagersOn.GetComponent<ManagerType>();`) and pass them to the manager by calling `AddFeatureManager(featureManager)` on the twitch manager. At this point you can now call `Connect()`.
+## What Does Twitchmata Do?
 
-For a longer example:
+Twitch has various APIs to request information and get notified of events. There already exists an excellent implementation of this API in C# called [TwitchLib](https://github.com/twitchlib/twitchlib). However, this API is designed to be generic and work for many different use-cases.
 
-```
-using Twitchmata;
+Twitchmata is a wrapper around TwitchLib to optimise the API for VIPOs and provide better Unity integration. It provides help for authenticating accounts and handles a lot of the boilerplate code so that you can focus on implementing what makes your stream unique.
 
-//Note: In this example feature managers added to this object instance in scene
-public class MyMainScript: MonoBehaviour {
-	TwitchManager apiManager;
+Twitchmata currently has support for dealing with Follows, Subscribers, Raids, Bits, Chat (including Chat Commands), and Channel Points.
 
-	void Start() {
-		this.apiManager = new TwitchManager();
-		
-		this.apiManager.AddFeatureManager(GetComponent<BitsManager>());
-		this.apiManager.AddFeatureManager(GetComponent<RaidManager>());
-		this.apiManager.AddFeatureManager(GetComponent<SubscriberManager>());
-		
-		this.apiManager.Connect();
-	}	
-}
-```
+
+## Setup
+
+You can find out more about setting up Twitchmata in your overlay [here](https://github.com/pilky/twitchmata/tree/main/Documentation/Setup.md)
+
+
+## Usage Overview
+
+Twitchmata has a few key classes:
+
+- `TwitchManager` is the base class which acts as the root of the Twitch integration and is where you do most of the configuration
+- `ConnectionManager` handles the connection to Twitch through various API endpoint. You mostly don't need to touch this, but it lets you easily drop down to using TwitchLib directly if you need some functionality Twitchmata does not provide.
+- `UserManager` holds a list of users known to Twitchmata. Most APIs will give you a `User` type with information about who invoked it
+- `FeatureManagers` are where most of your custom code will go. See below on how to use them.
+- `Utilities` provides additional functionality that doesn't fit in a FeatureManager (e.g. downloading a user's avatar as a `Texture2D`). [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Utilities.md)
+
+### Feature Managers
+
+Twitchmata provides access to various bits of Twitch functionality through Feature Managers. Feature Managers are intended to be subclassed by you to allow your overlay to respond to notifications or invoke various features. Below gives an example on how to set up a Feature Manager for handling follower:
+
+1. Create a new C# Script in Unity called "MyFollowerManager" (or whatever name you desire) and open in your code editor of choice
+
+2. Add `using Twitchmata;` to the includes at the top of the file
+
+3. Change the super class from `MonoBehaviour` to `FollowerManager`
+
+4. Add an empty `GameObject` as a child of the `TwitchManager` object you added during setup
+
+5. Add the "MyFollowerManager" class as a component
+
+
+Your MyFollowerManager class will now be notified when a user follows your channel and keep a list of everyone who followed while your overlay was open. Twitchmata provides Feature Managers for the following:
+- Followers [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Followers.md)
+- Subscribers [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Subscribers.md)
+- Raids [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Raids.md)
+- Channel Points/Rewards [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/ChannelPoints.md)
+- Chat Commands [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/ChatCommands.md)
+- Chatters [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Chatters.md)
+- Bits [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Bits.md)
