@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
 using TwitchLib.Unity;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 namespace Twitchmata {
