@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TwitchLib.Api.Core;
 using TwitchLib.Api.Core.Models.Undocumented.Chatters;
+using TwitchLib.Api.Helix.Models.Chat;
 using TwitchLib.Api.Helix.Models.Chat.GetChatters;
 using TwitchLib.Client.Events;
 using TwitchLib.Unity;
@@ -77,6 +79,37 @@ namespace Twitchmata {
         #endregion
 
 
+        #region Sending Messages
+        /// <summary>
+        /// Send an announcement to the chat
+        /// </summary>
+        /// <param name="message">The message to send</param>
+        /// <param name="colour">The announcement colour to use (default: null, i.e. the channel colour)</param>
+        /// <param name="preferredAccount">The preferredAccount to post with (falls back to broadcaster if bot is not available)</param>
+        public void SendAnnouncement(string message, AnnouncementColors colour = null, PosterAccount preferredAccount = PosterAccount.Broadcaster) {
+            var account = this.Connection.ChannelID;
+            var accessToken = this.Connection.Secrets.AccountAccessToken;
+            if (preferredAccount == PosterAccount.Bot && this.Connection.BotID != null) {
+                account = this.Connection.BotID;
+                accessToken = this.Connection.Secrets.BotAccessToken;
+            }
+
+            var task = this.Connection.API.Helix.Chat.SendChatAnnouncementAsync(this.Connection.ChannelID, account, message, colour, accessToken);
+            TwitchManager.RunTask(task, () => {
+                Logger.LogInfo("Announcement sent");
+            });
+        }
+
+        //Implement in TwitchLib
+        //Add rate limit (2min per shoutout, 60m per streamer)
+        //Sender (broadcaster or chat bot)
+        //Type (native, text, auto [uses native but falls back to text if necessary])
+        public void ShoutOut(string streamerName) {
+            
+        }
+        #endregion
+
+
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
@@ -138,5 +171,13 @@ namespace Twitchmata {
             }
         }
         #endregion
+    }
+
+    /// <summary>
+    /// The account to use for Chat calls
+    /// </summary>
+    public enum PosterAccount {
+        Broadcaster,
+        Bot,
     }
 }

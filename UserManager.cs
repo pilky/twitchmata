@@ -200,6 +200,7 @@ namespace Twitchmata {
 
         #region Fetching Initial User Info
         internal string BroadcasterID { get; private set; }
+        internal string BotID { get; private set; }
         internal void PerformSetup(Action callback) {
             var channelName = this.ConnectionManager.ConnectionConfig.ChannelName;
             var channelID = this.ConnectionManager.Secrets.ChannelIDForChannel(channelName);
@@ -210,21 +211,40 @@ namespace Twitchmata {
                 this.FetchUserWithID(channelID, (user) => {
                     user.IsBroadcaster = true;
                 });
+            } else {
+                this.FetchUserWithUserName(channelName, (user) => {
+                    user.IsBroadcaster = true;
+                    this.ConnectionManager.Secrets.SetChannelIDForChannel(channelName, user.UserId);
+                    this.BroadcasterID = user.UserId;
+                    callback.Invoke();
+                    this.FetchUserInfo();
+                });
+            }
+
+            
+        }
+
+        internal void FetchBotInfo() {
+            var botName = this.ConnectionManager.ConnectionConfig.BotName;
+            if (botName == null || botName.Length == 0) {
                 return;
             }
 
-            this.FetchUserWithUserName(channelName, (user) => {
-                user.IsBroadcaster = true;
-                this.ConnectionManager.Secrets.SetChannelIDForChannel(channelName, user.UserId);
-                this.BroadcasterID = user.UserId;
-                callback.Invoke();
-                this.FetchUserInfo();
-            });
-        } 
+            var botID = this.ConnectionManager.Secrets.ChannelIDForChannel(botName);
+            if (botID != null && botID.Length > 0) {
+                this.BotID = botID;
+                this.FetchUserWithID(botID, (user) => { });
+            } else {
+                this.FetchUserWithUserName(botName, (user) => {
+                    this.BotID = user.UserId;
+                });
+            }
+        }
 
 
         internal void FetchUserInfo() {
             Logger.LogInfo("Fetching user info");
+            this.FetchBotInfo();
             this.FetchNextSubscribers();
             this.FetchNextVIPs();
             this.FetchNextModerators();

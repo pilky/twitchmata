@@ -25,6 +25,10 @@ namespace Twitchmata {
             get { return this.UserManager.BroadcasterID; }
         }
 
+        public string BotID {
+            get { return this.UserManager.BotID; }
+        }
+
         /// <summary>
         /// Connect to PubSub and Chat Bot
         /// </summary>
