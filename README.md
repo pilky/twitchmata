@@ -9,6 +9,8 @@ Twitchmata has been tested on Unity 2022.1+
 
 Animata are a type of VTuber, virtual stream avatars common on Twitch. Animata are more akin to puppets, often controlled with a game controller, and they exist in a VIPO: **Virtual Interactive Puppet Overlay**. A VIPO is a virtual environment, often built in a game engine, which an Animata can move around in and interact with. They also provide interactivity to viewers, responding to various events on Twitch, which is where Twitchmata comes in.
 
+For a great example of what a VIPO overlay can do, visit https://twitch.tv/doigswift
+
 
 ## What Does Twitchmata Do?
 
