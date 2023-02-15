@@ -21,7 +21,7 @@ namespace Twitchmata {
         #endregion
 
 
-        #region Convenience Properties
+        #region Convenience Properties & Methods
         /// <summary>
         /// The current channel ID
         /// </summary>
@@ -38,6 +38,11 @@ namespace Twitchmata {
 
         internal UserManager UserManager {
             get { return this.Connection.UserManager; }
+        }
+
+        public void SendChatMessage(string message) {
+            Debug.Log("channel name" + this.Connection.ConnectionConfig.ChannelName);
+            this.Connection.Client.SendMessage(this.Connection.ConnectionConfig.ChannelName, message);
         }
         #endregion
 

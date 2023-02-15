@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using TwitchLib.PubSub.Models.Responses;
 using TwitchLib.Api.Auth;
 using System;
+using TwitchLib.Communication.Events;
 
 namespace Twitchmata {
     public class ConnectionManager {
@@ -78,6 +79,8 @@ namespace Twitchmata {
             this.Client = new Client();
             this.Client.OnIncorrectLogin += Client_OnIncorrectLogin;
         }
+
+        
 
         private void SetupAPIAndPubSub() {
             this.API = new Api();
