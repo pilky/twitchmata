@@ -57,5 +57,5 @@ Your MyFollowerManager class will now be notified when a user follows your chann
 - Raids [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Raids.md)
 - Channel Points/Rewards [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/ChannelPoints.md)
 - Chat Commands [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/ChatCommands.md)
-- Chatters [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Chatters.md)
+- Chat [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Chat.md)
 - Bits [(documentation)](https://github.com/pilky/twitchmata/tree/main/Documentation/Bits.md)
