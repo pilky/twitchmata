@@ -1,6 +1,6 @@
-﻿# FollowersManager
+﻿# SubscriberManager
 
-A `FollowersManager` allows you to manage follow events
+A `SubscriberManager` allows you to manage subscriber events
 
 ## Respond to Subscription
 
