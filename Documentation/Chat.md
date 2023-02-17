@@ -27,7 +27,7 @@ To use the `ShoutOut()` function just pass in the streamer's name. Twitchmata wi
 
 Twitch has cooldowns on native shout outs (2 minutes per shoutout and 60 minutes for each streamer shouted out). Twitchmata will try to manage these cooldowns for you. If you run `ShoutOut()` again during a timeout then it will fall back to using a text shoutout.
 
-###Customising Text Shoutouts
+### Customising Text Shoutouts
 
 You can customise the textual shoutouts by changing the `.ShoutOutTemplate` property on your `ChatManager`. This can be done either in code or through the Unity inspector.
 

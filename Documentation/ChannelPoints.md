@@ -1,13 +1,13 @@
-﻿#Channel Points/Rewards
+﻿# Channel Points/Rewards
 
 A `ChannelPointManager` helps you manage rewards that users can spend channel points on. The `ChannelPointManager` class supports 2 types of reward: Managed and Unmanaged.
 
-##Unmanaged Rewards
+## Unmanaged Rewards
 Unmanaged rewards are rewards that were created by something other than your overlay (usually the Twitch dashboard). Twitchmata has less control over these so you are limited to simply being notified when one is redeemed.
 
 You can register an unmanaged reward using the `RegisterUnmanagedReward()` function, passing in the title of the reward and a delegate method to call when the reward is redeemed.
 
-##Managed Rewards
+## Managed Rewards
 Managed rewards offer a lot more power and flexibility as they are created and handled by Twitchmata. Additional functionality includes:
 
 - Enabling/disabling rewards
@@ -18,7 +18,7 @@ Managed rewards offer a lot more power and flexibility as they are created and h
 
 See the examples below for how to use managed rewards
 
-###Registering Managed Reward
+### Registering Managed Reward
 
 You need to register any managed rewards with the `ChannelPointManager` each time your overlay starts. Twitchmata will then make sure the reward exists and is up-to-date.
 
@@ -45,7 +45,7 @@ public class TwitchChannelPointManager : Twitchmata.ChannelPointManager {
 
 You need to keep a reference to the created `ManagedReward` objects if you wish to update them in future. It's recommended you store them in properties in your `ChannelPointManager` subclass
 
-###Updating Managed Reward
+### Updating Managed Reward
 
 You can disable and enable rewards like so:
 
