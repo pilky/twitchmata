@@ -66,7 +66,7 @@ namespace Twitchmata {
             if (this.WindowXML != null) {
                 return true;
             }
-            this.WindowXML = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Asset/External/Twitchmata/Editor/TwitchmataAutomation_UXML.uxml");
+            this.WindowXML = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/External/Twitchmata/Editor/TwitchmataAutomation_UXML.uxml");
             return this.WindowXML != null;
         }
 
