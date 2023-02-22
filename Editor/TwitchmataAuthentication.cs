@@ -21,15 +21,14 @@ namespace Twitchmata {
         public void CreateGUI() {
             this.TwitchManager = Selection.activeGameObject.GetComponent<TwitchManager>();
             if (this.TwitchManager == null) {
-                var label = new Label("You must select a GameObject containing a TwitchManager before opening this window");
-                label.style.unityFontStyleAndWeight = FontStyle.Bold;
-                label.style.unityTextAlign = TextAnchor.MiddleCenter;
-                label.style.whiteSpace = WhiteSpace.Normal;
-                label.style.marginTop = 20;
-                this.rootVisualElement.Add(label);
+                this.DisplayInfoLabel("You must select a GameObject containing a TwitchManager before opening this window");
                 return;
             }
 
+            if (this.EnsureWindowXMLExists() == false) {
+                this.DisplayInfoLabel("Could not find Auth UI. \n\nEnsure Twitchmata is in Assets/External/Twitchmata. Alternatively, select Editor/TwitchmataAuthentication.cs in Unity's Project panel and drag the UXML file to the Window XML field of the inspector");
+                return;
+            }
 
             var ui = this.WindowXML.CloneTree();
             this.rootVisualElement.Add(ui);
@@ -52,6 +51,23 @@ namespace Twitchmata {
             this.BotAuthField = ui.Query<TextField>("bot_auth_field").First();
             this.BotSuccessLabel = ui.Query<Label>("bot_success_label").First();
             this.BotErrorLabel = ui.Query<Label>("bot_error_label").First();
+        }
+
+        private void DisplayInfoLabel(string labelText) {
+            var label = new Label(labelText);
+            label.style.unityFontStyleAndWeight = FontStyle.Bold;
+            label.style.unityTextAlign = TextAnchor.MiddleCenter;
+            label.style.whiteSpace = WhiteSpace.Normal;
+            label.style.marginTop = 20;
+            this.rootVisualElement.Add(label);
+        }
+
+        private bool EnsureWindowXMLExists() {
+            if (this.WindowXML != null) {
+                return true;
+            }
+            this.WindowXML = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Asset/External/Twitchmata/Editor/TwitchmataAutomation_UXML.uxml");
+            return this.WindowXML != null;
         }
 
         private TextField ChannelAuthField;

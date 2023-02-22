@@ -6,7 +6,7 @@
 
 The first step is to download Twitchmata. You can find the latest version [here](https://github.com/pilky/twitchmata/releases). Download the zip file of the release at the top of the page.
 
-Once downloaded you need to unzip the release. Next, create a folder in your Unity project's Assets folder and call it "External". Drag the unzipped release of twitchmata into this External folder.
+Once downloaded you need to unzip the release. Next, create a folder in your Unity project's Assets folder and call it "External". Drag the unzipped release of Twitchmata into this External folder (ensure folder is just called "Twitchmata").
 
 ## 2. Setting up the Game Object
 
