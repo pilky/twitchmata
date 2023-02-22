@@ -19,7 +19,12 @@ namespace Twitchmata {
 
         public VisualTreeAsset WindowXML;
         public void CreateGUI() {
-            this.TwitchManager = Selection.activeGameObject.GetComponent<TwitchManager>();
+            var selectedObject = Selection.activeGameObject;
+            if (selectedObject == null) {
+                this.DisplayInfoLabel("You must select a GameObject containing a TwitchManager before opening this window");
+                return;
+            }
+            this.TwitchManager = selectedObject.GetComponent<TwitchManager>();
             if (this.TwitchManager == null) {
                 this.DisplayInfoLabel("You must select a GameObject containing a TwitchManager before opening this window");
                 return;
