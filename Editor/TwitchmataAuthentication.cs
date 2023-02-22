@@ -47,13 +47,19 @@ namespace Twitchmata {
             saveBotAuthButton.RegisterCallback<MouseUpEvent>(SaveBotAuth);
 
             this.ChannelAuthField = ui.Query<TextField>("channel_auth_field").First();
+            this.ChannelSuccessLabel = ui.Query<Label>("channel_success_label").First();
+            this.ChannelErrorLabel = ui.Query<Label>("channel_error_label").First();
             this.BotAuthField = ui.Query<TextField>("bot_auth_field").First();
-            this.ErrorLabel = ui.Query<Label>("error_label").First();
+            this.BotSuccessLabel = ui.Query<Label>("bot_success_label").First();
+            this.BotErrorLabel = ui.Query<Label>("bot_error_label").First();
         }
 
         private TextField ChannelAuthField;
+        private Label ChannelSuccessLabel;
+        private Label ChannelErrorLabel;
         private TextField BotAuthField;
-        private Label ErrorLabel;
+        private Label BotSuccessLabel;
+        private Label BotErrorLabel;
 
         private string ChannelAuthState;
         private void OpenAuthenticateChannel(MouseUpEvent evt) {
@@ -82,8 +88,13 @@ namespace Twitchmata {
                 }
                 var persistence = new Persistence(persistencePath);
                 persistence.AccountAccessToken = channelToken;
+
+                this.ChannelErrorLabel.style.display = DisplayStyle.None;
+                this.ChannelSuccessLabel.style.display = DisplayStyle.Flex;
             } catch {
-                this.DisplayError("Could not complete authentication. Please double-check the pasted URL");
+                this.ChannelErrorLabel.style.display = DisplayStyle.Flex;
+                this.ChannelSuccessLabel.style.display = DisplayStyle.None;
+                this.ChannelErrorLabel.text = "Could not complete authentication. Please double-check the pasted URL";
             }
         }
 
@@ -99,8 +110,13 @@ namespace Twitchmata {
                 }
                 var persistence = new Persistence(persistencePath);
                 persistence.BotAccessToken = botToken;
+
+                this.BotErrorLabel.style.display = DisplayStyle.None;
+                this.BotSuccessLabel.style.display = DisplayStyle.Flex;
             } catch {
-                this.DisplayError("Could not complete authentication. Please double-check the pasted URL");
+                this.BotErrorLabel.style.display = DisplayStyle.Flex;
+                this.BotSuccessLabel.style.display = DisplayStyle.None;
+                this.BotErrorLabel.text = "Could not complete authentication. Please double-check the pasted URL";
             }
         }
 
@@ -125,10 +141,6 @@ namespace Twitchmata {
                 return null;
             }
             return token;
-        }
-
-        private void DisplayError(string error) {
-            this.ErrorLabel.text = error;
         }
     }
 }
