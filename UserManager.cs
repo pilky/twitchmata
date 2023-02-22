@@ -41,8 +41,9 @@ namespace Twitchmata {
         /// <param name="userName">The username of to find the user for</param>
         /// <returns>A user, if that user exists locally</returns>
         public Models.User UserWithUserName(string userName) {
+            var normalisedUsername = this.NormalisedUsername(userName);
             foreach (var user in UsersByID.Values) {
-                if (user.UserName == userName) {
+                if (user.UserName == normalisedUsername) {
                     return user;
                 }
             }
@@ -76,7 +77,8 @@ namespace Twitchmata {
         /// <param name="userName">The username of the user to fetch</param>
         /// <param name="action">An action that accepts the user (or null if an error occured)</param>
         public void FetchUserWithUserName(string userName, Action<Models.User> action) {
-            var task = this.ConnectionManager.API.Helix.Users.GetUsersAsync(null, new List<string> { userName });
+            var normalisedUsername = this.NormalisedUsername(userName);
+            var task = this.ConnectionManager.API.Helix.Users.GetUsersAsync(null, new List<string> { normalisedUsername });
             TwitchManager.RunTask(task, obj => {
                 var users = obj.Users;
                 if (users.Length == 0) {
@@ -297,6 +299,19 @@ namespace Twitchmata {
                 }
             });
         }
+        #endregion
+
+
+        #region Helpers
+
+        private string NormalisedUsername(string username) {
+            if (username.StartsWith("@") && username.Length > 1)
+            {
+                return username.Substring(1);
+            }
+            return username;
+        }
+
         #endregion
     }
 }
