@@ -192,6 +192,8 @@ namespace Twitchmata {
                 reward.Id = id;
                 this.ManagedRewardsByID[id] = reward;
                 Logger.LogInfo("Created reward '" + reward.Title + "'");
+            }, (error) => {
+                Logger.LogError("Could not create managed reward. Make sure a reward with this name doesn't already exist.\nIf you wish to convert an existing reward to a managed reward you must first delete the reward in Twitch's dashboard.");
             });
         }
 

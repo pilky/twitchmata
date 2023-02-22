@@ -121,7 +121,7 @@ namespace Twitchmata {
 
 
         #region Threading Helpers
-        internal static void RunTask<T>(Task<T> func, Action<T> action) {
+        internal static void RunTask<T>(Task<T> func, Action<T> action, Action<Exception> errorAction = null) {
             ThreadDispatcher.EnsureCreated("InvokeInternal");
             func.ContinueWith(delegate (Task<T> x) {
                 try {
@@ -131,12 +131,16 @@ namespace Twitchmata {
                         action(value);
                     });
                 } catch (Exception e) {
+                    if (errorAction != null) {
+                        errorAction(e);
+                        return;
+                    }
                     Logger.LogError("Error getting result: " + e.Message);
                 }
             });
         }
 
-        internal static void RunTask(Task func, Action action) {
+        internal static void RunTask(Task func, Action action, Action<Exception> errorAction = null) {
             ThreadDispatcher.EnsureCreated("InvokeInternal");
             func.ContinueWith(delegate (Task x) {
                 try {
@@ -146,6 +150,10 @@ namespace Twitchmata {
                         action();
                     });
                 } catch (Exception e) {
+                    if (errorAction != null) {
+                        errorAction(e);
+                        return;
+                    }
                     Logger.LogError("Error getting result: " + e.Message);
                 }
             });
