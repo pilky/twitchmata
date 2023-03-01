@@ -17,6 +17,10 @@ namespace Twitchmata.Models {
         /// Any user input required by the channel points
         /// </summary>
         public string UserInput;
+        /// <summary>
+        /// The reward that was redeemed
+        /// </summary>
+        public ManagedReward Reward;
     }
 }
 
