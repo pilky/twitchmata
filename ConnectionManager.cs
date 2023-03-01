@@ -143,6 +143,18 @@ namespace Twitchmata {
             Logger.LogError("PubSub Error: " + args.Exception.Message);
         }
 
+        internal void PubSub_SendTestMessage(string topicName, System.Object messageObject) {
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(new {
+                type = "MESSAGE",
+                data = new {
+                    topic = topicName,
+                    message = messageObject
+                }
+            });
+
+            this.PubSub.TestMessageParser(jsonString);
+        }
+
         #endregion
 
 

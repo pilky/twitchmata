@@ -139,7 +139,7 @@ namespace Twitchmata {
                 }
             });
         }
-
+         
         internal static void RunTask(Task func, Action action, Action<Exception> errorAction = null) {
             ThreadDispatcher.EnsureCreated("InvokeInternal");
             func.ContinueWith(delegate (Task x) {
@@ -162,6 +162,13 @@ namespace Twitchmata {
 
         private void OnEnable() {
             this.Reset();
+
+            //For some reason the connection can be messed up on game objects until they are re-enabled
+            //We literally fix the problem by turning it off and on again
+            foreach (var featureManager in this.ConnectionManager.FeatureManagers) {
+                featureManager.gameObject.SetActive(false);
+                featureManager.gameObject.SetActive(true);
+            }
         }
     }
 }

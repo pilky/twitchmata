@@ -9,7 +9,7 @@ namespace Twitchmata.Models {
     /// this cannot be guaranteed to be fully filled out. Pay attention to the remarks for
     /// each property for when it should be available
     /// </remarks>
-    public class Subscription {
+    public class    Subscription {
         /// <summary>
         /// The total number of months the user has been subscribed to the channel
         /// </summary>
@@ -69,6 +69,21 @@ namespace Twitchmata.Models {
                 return SubscriptionTier.Prime;
             }
             return SubscriptionTier.NotSet;
+        }
+
+        static internal string StringForTier(SubscriptionTier tier) {
+            switch (tier) {
+                case SubscriptionTier.Prime:
+                    return "Prime";
+                case SubscriptionTier.Tier1:
+                    return "1000";
+                case SubscriptionTier.Tier2:
+                    return "2000";
+                case SubscriptionTier.Tier3:
+                    return "3000";
+                default:
+                    return null;
+            }
         }
     }
 

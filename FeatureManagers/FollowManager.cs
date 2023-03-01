@@ -34,6 +34,16 @@ namespace Twitchmata {
         #endregion
 
 
+        #region Debug
+        public void Debug_NewFollow(string displayName = "JWP", string username = "jwp", string userID = "95546976") {
+            this.Connection.PubSub_SendTestMessage("following.000", new {
+                display_name = displayName,
+                username = username,
+                user_id = userID
+            });
+        }
+        #endregion
+
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *

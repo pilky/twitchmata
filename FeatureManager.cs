@@ -41,7 +41,6 @@ namespace Twitchmata {
         }
 
         public void SendChatMessage(string message) {
-            Debug.Log("channel name" + this.Connection.ConnectionConfig.ChannelName);
             this.Connection.Client.SendMessage(this.Connection.ConnectionConfig.ChannelName, message);
         }
         #endregion

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using TwitchLib.Unity;
 using Twitchmata;
 using Twitchmata.Models;
+using System;
+using TwitchLib.Api.Core.Extensions.System;
 
 namespace Twitchmata {
     /// <summary>
@@ -41,6 +43,74 @@ namespace Twitchmata {
         #endregion
 
 
+        #region Debug
+
+        public void Debug_NewSubscription(
+            string displayName = "TWW2",
+            string userName = "tww2",
+            string userID = "13405587",
+            SubscriptionTier plan = SubscriptionTier.Tier1,
+            string planName = "Channel Subscription",
+            int cumulativeMonths = 1,
+            int streakMonths = 1,
+            bool isResub = false,
+            string message = "I just subscribed!"
+            ) {
+            this.Connection.PubSub_SendTestMessage("channel-subscribe-events-v1.44322889", new {
+                user_name = userName,
+                display_name = displayName,
+                user_id = userID,
+                channel_name = this.Connection.ConnectionConfig.ChannelName,
+                channel_id = this.Connection.ChannelID,
+                time = DateTime.Now.ToRfc3339String(),
+                sub_plan = Subscription.StringForTier(plan),
+                sub_plan_name = planName,
+                cumulative_months = cumulativeMonths,
+                streak_months = streakMonths,
+                context = isResub ? "resub" : "sub",
+                is_gift = false,
+                sub_message = new {
+                    message = message,
+                    emotes = new List<System.Object>() { }
+                }
+            });
+        }
+
+        public void Debug_NewGiftSubscription(
+            string gifterDisplayName = "TWW2",
+            string gifterUserName = "tww2",
+            string gifterUserID = "13405587",
+            string recipientDisplayName = "ForstyCup",
+            string recipientUserName = "forstycup",
+            string recipientUserID = "19571752",
+            SubscriptionTier plan = SubscriptionTier.Tier1,
+            string planName = "Channel Subscription",
+            int months = 1,
+            string message = "I just gifted a sub!"
+            ) {
+            this.Connection.PubSub_SendTestMessage("channel-subscribe-events-v1.44322889", new {
+                user_name = gifterUserName,
+                display_name = gifterDisplayName,
+                user_id = gifterUserID,
+                channel_name = this.Connection.ConnectionConfig.ChannelName,
+                channel_id = this.Connection.ChannelID,
+                time = DateTime.Now.ToRfc3339String(),
+                sub_plan = Subscription.StringForTier(plan),
+                sub_plan_name = planName,
+                months = months,
+                context = "subgift",
+                is_gift = true,
+                sub_message = new {
+                    message = message,
+                    emotes = new List<System.Object>() { }
+                },
+                recipient_id = recipientUserID,
+                recipientUserName = recipientUserName,
+                recipientDisplayName = recipientDisplayName
+            });
+        }
+
+        #endregion
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
