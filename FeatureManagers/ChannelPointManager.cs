@@ -213,7 +213,7 @@ namespace Twitchmata {
                 return;
             }
 
-            if (apiRedemption.Status == "UNFULFILLED") { 
+            if ((apiRedemption.Status == "UNFULFILLED") && (reward.AutoFulfills == true)) { 
                 this.UpdateRedemptionStatus(apiRedemption, CustomRewardRedemptionStatus.FULFILLED);
             }
             reward.Callback(redemption);

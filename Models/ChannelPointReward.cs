@@ -104,6 +104,11 @@ namespace Twitchmata.Models {
         /// </remarks>
         public List<string> ValidInputs { get; set; } = new List<string>();
 
+        /// <summary>
+        /// Whether the reward's redemption is auto-fulfilled by Twitchmata
+        /// </summary>
+        public bool AutoFulfills { get; set; } = true;
+
         #endregion
 
 
