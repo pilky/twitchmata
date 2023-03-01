@@ -1,5 +1,4 @@
 ﻿using System;
-using F10.StreamDeckIntegration;
 using UnityEngine;
 
 namespace Twitchmata { 
