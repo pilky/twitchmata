@@ -159,8 +159,10 @@ namespace Twitchmata {
             });
         }
         #endregion
+
+        private void OnEnable() {
+            this.Reset();
+        }
     }
-
-
 }
 
