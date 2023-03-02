@@ -9,7 +9,7 @@ namespace Twitchmata.Models {
     /// this cannot be guaranteed to be fully filled out. Pay attention to the remarks for
     /// each property for when it should be available
     /// </remarks>
-    public class    Subscription {
+    public class Subscription {
         /// <summary>
         /// The total number of months the user has been subscribed to the channel
         /// </summary>

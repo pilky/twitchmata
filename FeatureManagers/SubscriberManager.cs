@@ -45,6 +45,18 @@ namespace Twitchmata {
 
         #region Debug
 
+        /// <summary>
+        /// Simulates a subscription event
+        /// </summary>
+        /// <param name="displayName">The display name of the subscriber</param>
+        /// <param name="userName">The username of the subscriber</param>
+        /// <param name="userID">The user ID of the subscriber</param>
+        /// <param name="plan">The subscription plan</param>
+        /// <param name="planName">The name of the subscription plan</param>
+        /// <param name="cumulativeMonths">The total number of months subscribed</param>
+        /// <param name="streakMonths">The number of months in the current subscription streak</param>
+        /// <param name="isResub">True if the user is re-subscribing, false if they're subscribing for the first time</param>
+        /// <param name="message">The message sent with the subscription</param>
         public void Debug_NewSubscription(
             string displayName = "TWW2",
             string userName = "tww2",
@@ -76,6 +88,19 @@ namespace Twitchmata {
             });
         }
 
+        /// <summary>
+        /// Simulates a gift subscription
+        /// </summary>
+        /// <param name="gifterDisplayName">The display name of the user gifting the sub</param>
+        /// <param name="gifterUserName">The username of the user gifting the sub</param>
+        /// <param name="gifterUserID">The user ID of the user gifting the sub</param>
+        /// <param name="recipientDisplayName">The display name of the user receiving the sub</param>
+        /// <param name="recipientUserName">The username of the user receiving the sub</param>
+        /// <param name="recipientUserID">The user ID of the user receiving the sub</param>
+        /// <param name="plan">The subscription plan</param>
+        /// <param name="planName">The name of the subscription plan</param>
+        /// <param name="months">The number of months gifted</param>
+        /// <param name="message">The message associated with the subscription</param>
         public void Debug_NewGiftSubscription(
             string gifterDisplayName = "TWW2",
             string gifterUserName = "tww2",

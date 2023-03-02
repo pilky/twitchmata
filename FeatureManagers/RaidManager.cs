@@ -75,6 +75,21 @@ namespace Twitchmata {
         #endregion
 
 
+        #region Debug
+        /// <summary>
+        /// Simulates an incoming raid
+        /// </summary>
+        /// <param name="viewerCount">The number of viewers in the raid</param>
+        /// <param name="displayName">The display name of the raiding channel</param>
+        /// <param name="username">The username of the raiding channel</param>
+        /// <param name="userID">The user ID of the raiding channel</param>
+        public void Debug_IncomingRaid(int viewerCount = 20, string displayName = "TestChannel", string username = "testchannel", string userID = "123456") {
+            var channelName = "#" + this.Connection.ConnectionConfig.ChannelName;
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var chatMessage = $"@badge-info=;badges=;color=#888888;display-name={displayName};emotes=;id={Guid.NewGuid().ToString()};login={username};mod=0;msg-id=raid;msg-param-displayName={displayName};msg-param-login={username};msg-param-viewerCount={viewerCount};room-id=33332222;subscriber=0;system-msg={viewerCount}\\sraiders\\sfrom\\s{displayName}\\shave\\sjoined\\n!;tmi-sent-ts={timestamp};turbo=0;user-id={userID};user-type= :tmi.twitch.tv USERNOTICE {channelName}";
+            this.Connection.Client.OnReadLineTest(chatMessage);
+        }
+        #endregion
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
