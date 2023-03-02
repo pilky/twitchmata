@@ -21,6 +21,13 @@ namespace Twitchmata.Models {
         /// The reward that was redeemed
         /// </summary>
         public ManagedReward Reward;
+
+
+        /**************************************************
+         * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
+         **************************************************/
+
+        internal string RedemptionID;
     }
 }
 

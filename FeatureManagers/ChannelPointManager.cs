@@ -164,6 +164,25 @@ namespace Twitchmata {
         #endregion
 
 
+        #region Complete Redemptions
+        /// <summary>
+        /// Fulfill the supplied redemption (will fail if not unfulfilled)
+        /// </summary>
+        /// <param name="redemption">The redemption to fulfill</param>
+        public void FulfillRedemption(ChannelPointRedemption redemption) {
+            this.UpdateRedemptionStatus(redemption, CustomRewardRedemptionStatus.FULFILLED);
+        }
+
+        /// <summary>
+        /// Cancel the supplied redemption, refunding channel points to the user (will fail if not unfulfilled)
+        /// </summary>
+        /// <param name="redemption">The redemption to cancel</param>
+        public void CancelRedemption(ChannelPointRedemption redemption) {
+            this.UpdateRedemptionStatus(redemption, CustomRewardRedemptionStatus.CANCELED);
+        }
+    
+        #endregion
+
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
@@ -195,16 +214,17 @@ namespace Twitchmata {
             }
 
             var reward = this.ManagedRewardsByID[apiRedemption.Reward.Id];
+            redemption.Reward = reward;
 
             if (redemption.User.IsPermitted(reward.Permissions) == false) {
                 Logger.LogInfo("User not permitted");
-                this.UpdateRedemptionStatus(apiRedemption, CustomRewardRedemptionStatus.CANCELED);
+                this.CancelRedemption(redemption);
                 return;
             }
 
             if (reward.RequiresUserInput && reward.ValidInputs.Count > 0 && reward.ValidInputs.Contains(redemption.UserInput.ToLower()) == false) {
                 Logger.LogInfo("Invalid input entered: " + redemption.UserInput);
-                this.UpdateRedemptionStatus(apiRedemption, CustomRewardRedemptionStatus.CANCELED);
+                this.CancelRedemption(redemption);
                 return;
             }
 
@@ -214,10 +234,8 @@ namespace Twitchmata {
             }
 
             if ((apiRedemption.Status == "UNFULFILLED") && (reward.AutoFulfills == true)) { 
-                this.UpdateRedemptionStatus(apiRedemption, CustomRewardRedemptionStatus.FULFILLED);
+                this.FulfillRedemption(redemption);
             }
-
-            redemption.Reward = reward;
 
             reward.Callback(redemption);
         }
@@ -226,7 +244,8 @@ namespace Twitchmata {
             return new ChannelPointRedemption() {
                 RedeemedAt = apiRedemption.RedeemedAt,
                 UserInput = apiRedemption.UserInput,
-                User = this.UserManager.UserForChannelPointsRedeem(apiRedemption)
+                User = this.UserManager.UserForChannelPointsRedeem(apiRedemption),
+                RedemptionID = apiRedemption.Id
             };
         }
         #endregion
@@ -286,10 +305,10 @@ namespace Twitchmata {
                 this.CreateReward(this.ManagedRewardsByTitle[title]);
             }
         }
-        
-        private void UpdateRedemptionStatus(Redemption redemption, CustomRewardRedemptionStatus newStatus) {
+
+        private void UpdateRedemptionStatus(ChannelPointRedemption redemption, CustomRewardRedemptionStatus newStatus) {
             var statusRequest = new UpdateCustomRewardRedemptionStatusRequest() { Status = newStatus };
-            var task = this.HelixAPI.ChannelPoints.UpdateRedemptionStatusAsync(this.ChannelID, redemption.Reward.Id, new List<string>() { redemption.Id}, statusRequest);
+            var task = this.HelixAPI.ChannelPoints.UpdateRedemptionStatusAsync(this.ChannelID, redemption.Reward.Id, new List<string>() { redemption.RedemptionID }, statusRequest);
             TwitchManager.RunTask(task, (obj) => {
                 Logger.LogInfo("Updated to status: "+ obj.Data[0].Status);
             });
