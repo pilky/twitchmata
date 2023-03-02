@@ -96,12 +96,20 @@ namespace Twitchmata {
         #endregion
 
         #region Reward Groups
+        /// <summary>
+        /// Enables all rewards in the supplied group
+        /// </summary>
+        /// <param name="group">The group to enable rewards in</param>
         public void EnableGroup(ManagedRewardGroup group) {
             foreach (var reward in group.Rewards) {
                 this.EnableReward(reward);
             }
         }
 
+        /// <summary>
+        /// Disables all rewards in the supplied group
+        /// </summary>
+        /// <param name="group">The group to disable rewards in</param>
         public void DisableGroup(ManagedRewardGroup group) {
             foreach (var reward in group.Rewards) {
                 this.DisableReward(reward);

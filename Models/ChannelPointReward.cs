@@ -17,7 +17,7 @@ namespace Twitchmata.Models {
     /// <remark>
     /// Note: updating the properties of a ManagedReward after registering it will not
     /// lead to any updates until the overlay is restarted. If you wish to update properties
-    /// while the overlay is running, please look at ChannelPointManager
+    /// while the overlay is running, please look at the Update Rewards region in ChannelPointManager
     /// </remark>
     public class ManagedReward {
         /// <summary>
