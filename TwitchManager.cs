@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Threading.Tasks;
 using TwitchLib.Unity;
+using Unity.VisualScripting;
 
 namespace Twitchmata {
 
@@ -74,6 +75,24 @@ namespace Twitchmata {
         public string PersistencePath;
 
         public LogLevel LogLevel = LogLevel.Error;
+        #endregion
+
+        #region Feature Managers
+
+        public T GetFeatureManager<T>() where T:FeatureManager, new() {
+            foreach (var featureManager in this.ConnectionManager.FeatureManagers) {
+                var typedFeatureManager = featureManager as T;
+                if (typedFeatureManager != null) {
+                    return typedFeatureManager;
+                }
+            }
+
+            var newFeatureManager = this.AddComponent<T>();
+            newFeatureManager.Manager = this;
+            this.ConnectionManager.RegisterFeatureManager(newFeatureManager);
+            return newFeatureManager;
+        }
+
         #endregion
 
 

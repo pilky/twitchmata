@@ -79,8 +79,7 @@ namespace Twitchmata {
         }
         #endregion
 
-
-
+        
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
@@ -88,7 +87,7 @@ namespace Twitchmata {
 
         #region Internal
         internal override void InitializeClient(Client client) {
-            Logger.LogInfo("Initializing Chat Manager");
+            Logger.LogInfo("Initializing Chat Participant Manager");
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnUserJoined += Client_OnUserJoined;
             client.OnUserLeft += Client_OnUserLeft;
