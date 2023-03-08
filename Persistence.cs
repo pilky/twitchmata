@@ -8,7 +8,7 @@ namespace Twitchmata {
         internal string RootPath { get; private set; }
         public Persistence(string rootPath) {
             this.RootPath = rootPath;
-            if (!Directory.Exists(rootPath + "/channels")) {
+            if (!Directory.Exists(rootPath + "/channels/")) {
                 Directory.CreateDirectory(rootPath + "/channels/");
             }
             if (!Directory.Exists(rootPath + "/auth/")) {

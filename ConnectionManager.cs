@@ -171,6 +171,13 @@ namespace Twitchmata {
             this.FeatureManagers.Add(manager);
             manager.InitializeWithAPIManager(this);
         }
+        
+        public void PerformPostDiscoverySetup() {
+            foreach (var featureManager in this.FeatureManagers) {
+                featureManager.PerformPostDiscoverySetup();
+            }
+        }
         #endregion
+        
     }
 }

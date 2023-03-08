@@ -133,6 +133,8 @@ namespace Twitchmata {
             if (this.ConnectionManager.FeatureManagers.Count == 0) {
                 Logger.LogWarning("No feature managers found");
             }
+
+            this.ConnectionManager.PerformPostDiscoverySetup();
         }
         #endregion
 

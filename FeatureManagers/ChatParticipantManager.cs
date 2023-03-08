@@ -8,6 +8,8 @@ using TwitchLib.Api.Helix.Models.Chat;
 using TwitchLib.Api.Helix.Models.Chat.GetChatters;
 using TwitchLib.Client.Events;
 using TwitchLib.Unity;
+using Twitchmata.Models;
+using UnityEditor.UI;
 using UnityEngine;
 
 namespace Twitchmata {
@@ -79,7 +81,36 @@ namespace Twitchmata {
         }
         #endregion
 
-        
+        #region Lurkers
+
+        [SerializeField]
+        private bool _lurkersEnabled = false;
+
+        public bool LurkersEnabled {
+            get { return this._lurkersEnabled; }
+
+            set {
+                this._lurkersEnabled = value;
+                if (value == true) {
+                    this.SetupLurkers();
+                }
+            }
+        }
+
+        public string LurkMessage = "{{user}} is now lurking";
+        public string UnlurkMessage = "{{user}} is no longer lurking";
+
+        public Dictionary<string, Models.User> Lurkers { get; private set; } = new Dictionary<string, Models.User>() { };
+
+        public virtual void UserLurked(Models.User lurker) {
+            Logger.LogInfo("User lurked: " + lurker.DisplayName);
+        }
+
+        public virtual void UserUnlurked(Models.User lurker) {
+            Logger.LogInfo("User unlurked: " + lurker.DisplayName);
+        }
+
+        #endregion
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
@@ -93,6 +124,13 @@ namespace Twitchmata {
             client.OnUserLeft += Client_OnUserLeft;
             client.OnModeratorJoined += Client_OnModeratorJoined;
             client.OnModeratorLeft += Client_OnModeratorLeft;
+        }
+
+        internal override void PerformPostDiscoverySetup() {
+            base.PerformPostDiscoverySetup();
+            if (this.LurkersEnabled == true) {
+                this.SetupLurkers();
+            }
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e) {
@@ -140,6 +178,61 @@ namespace Twitchmata {
                 this.ModeratorLeft(user);
             }
         }
+        #endregion
+
+        #region Lurkers Internal
+
+        private bool HasSetupLurkers = false;
+        private void SetupLurkers() {
+            if (this.HasSetupLurkers == true) {
+                return;
+            }
+            var chatMessageManager = this.Manager.GetFeatureManager<ChatMessageManager>();
+            chatMessageManager.RegisterChatCommand("lurk", Permissions.Everyone, OnEnterLurk);
+            chatMessageManager.RegisterChatCommand("unlurk", Permissions.Everyone, OnExitLurk);
+            this.HasSetupLurkers = true;
+        }
+
+        private Regex UserRegex = new Regex(Regex.Escape("{{user}}"));
+        private Regex LurkerCountRegex = new Regex(Regex.Escape("{{lurker-count}}"));
+        private void OnEnterLurk(List<string> arguments, User user) {
+            if (this.LurkersEnabled == false) {
+                return;
+            }
+            
+            if (this.Lurkers.ContainsKey(user.UserName)) {
+                return;
+            }
+            this.Lurkers[user.UserName] = user;
+            user.IsLurking = true;
+            if (this.LurkMessage.Length > 0) {
+                var userReplacedMessage = this.UserRegex.Replace(this.LurkMessage, user.DisplayName);
+                var lurkerCountReplacedMessage = this.LurkerCountRegex.Replace(userReplacedMessage, $"{this.Lurkers.Count}");
+                this.SendChatMessage(lurkerCountReplacedMessage);
+            }
+            this.UserLurked(user);
+        }
+        
+        private void OnExitLurk(List<string> arguments, User user) {
+            if (this.LurkersEnabled == false) {
+                return;
+            }
+            
+            if (this.Lurkers.ContainsKey(user.UserName) == false) {
+                this.SendChatMessage("You are not currently lurking");
+                return;
+            }
+
+            this.Lurkers.Remove(user.UserName);
+            user.IsLurking = false;
+            if (this.UnlurkMessage.Length > 0) {
+                var userReplacedMessage = this.UserRegex.Replace(this.UnlurkMessage, user.DisplayName);
+                var lurkerCountReplacedMessage = this.LurkerCountRegex.Replace(userReplacedMessage, $"{this.Lurkers.Count}");
+                this.SendChatMessage(lurkerCountReplacedMessage);
+            }
+            this.UserUnlurked(user);
+        }
+
         #endregion
     }
 

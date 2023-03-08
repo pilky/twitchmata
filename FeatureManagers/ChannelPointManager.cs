@@ -204,8 +204,8 @@ namespace Twitchmata {
             pubSub.ListenToChannelPoints(this.ChannelID);
         }
 
-        internal override void FinalizeInitialization() {
-            base.FinalizeInitialization();
+        internal override void PerformPostDiscoverySetup() {
+            base.PerformPostDiscoverySetup();
             this.FetchRemoteManagedRewards();
         }
 

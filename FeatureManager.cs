@@ -57,14 +57,14 @@ namespace Twitchmata {
             this.InitializeFeatureManager();
             this.InitializePubSub(manager.PubSub);
             this.InitializeClient(manager.Client);
-            this.FinalizeInitialization();
         }
-
-        internal virtual void FinalizeInitialization() { }
 
         internal virtual void InitializePubSub(PubSub pubSub) { }
 
         internal virtual void InitializeClient(Client client) { }
+        
+        //All feature managers set up by user are guaranteed to exist when this is called
+        internal virtual void PerformPostDiscoverySetup() { }
         #endregion
     }
 

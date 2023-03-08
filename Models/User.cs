@@ -54,6 +54,11 @@ namespace Twitchmata.Models {
         public bool IsSubscriber { get; internal set; } = false;
 
         /// <summary>
+        /// Whether or not the user is lurking in chat
+        /// </summary>
+        public bool IsLurking { get; internal set; } = false;
+
+        /// <summary>
         /// Details of the user's subscription. Will be null if the user isn't subscribed. May also be null even if the user *is* subscribed.
         /// </summary>
         public Subscription? Subscription { get; internal set; } = null;
