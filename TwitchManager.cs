@@ -112,7 +112,9 @@ namespace Twitchmata {
             Logger.TwitchManager = this;
         }
 
+        private bool HasStarted = false;
         private void Start() {
+            this.HasStarted = true;
             if (this.PersistencePath == null || this.PersistencePath == "") {
                 this.PersistencePath = Application.persistentDataPath;
             }
@@ -182,6 +184,10 @@ namespace Twitchmata {
         #endregion
 
         private void OnEnable() {
+            if (this.HasStarted == false) {
+                return;
+            }
+            
             this.Reset();
 
             //For some reason the connection can be messed up on game objects until they are re-enabled
