@@ -86,8 +86,8 @@ namespace Twitchmata {
                     return typedFeatureManager;
                 }
             }
-
-            var newFeatureManager = this.AddComponent<T>();
+            
+            var newFeatureManager = this.gameObject.AddComponent(typeof(T)) as T;
             newFeatureManager.Manager = this;
             this.ConnectionManager.RegisterFeatureManager(newFeatureManager);
             return newFeatureManager;

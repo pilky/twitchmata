@@ -173,7 +173,8 @@ namespace Twitchmata {
         }
         
         public void PerformPostDiscoverySetup() {
-            foreach (var featureManager in this.FeatureManagers) {
+            var featureManagers = new List<FeatureManager>(this.FeatureManagers);
+            foreach (var featureManager in featureManagers) {
                 featureManager.PerformPostDiscoverySetup();
             }
         }

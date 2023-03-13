@@ -9,7 +9,6 @@ using TwitchLib.Api.Helix.Models.Chat.GetChatters;
 using TwitchLib.Client.Events;
 using TwitchLib.Unity;
 using Twitchmata.Models;
-using UnityEditor.UI;
 using UnityEngine;
 
 namespace Twitchmata {
