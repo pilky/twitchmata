@@ -153,6 +153,11 @@ namespace Twitchmata {
             return this.ExistingOrNewUser(rewardRedemption.User.Id, rewardRedemption.User.Login, rewardRedemption.User.DisplayName); ;
         }
 
+        internal Models.User UserForChannelPointsRedemptionResponse(RewardRedemption rewardRedemption) {
+            return this.ExistingOrNewUser(rewardRedemption.UserId, rewardRedemption.UserLogin,
+                rewardRedemption.UserName);
+        }
+
         internal Models.User UserForChatMessage(ChatMessage chatMessage) {
             var user = this.ExistingOrNewUser(chatMessage.UserId, chatMessage.Username, chatMessage.DisplayName);
             user.IsBroadcaster = chatMessage.IsBroadcaster;

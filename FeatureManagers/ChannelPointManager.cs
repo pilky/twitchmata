@@ -201,7 +201,11 @@ namespace Twitchmata {
             Logger.LogInfo("Setting up Channel Points");
             pubSub.OnChannelPointsRewardRedeemed -= PubSub_OnChannelPointsRewardRedeemed;
             pubSub.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
+            //This is deprecated but is the only way to get notified of status updates with PubSub
+            pubSub.OnRewardRedeemed -= PubSub_RewardUpdated;
+            pubSub.OnRewardRedeemed += PubSub_RewardUpdated;
             pubSub.ListenToChannelPoints(this.ChannelID);
+            pubSub.ListenToRewards(this.ChannelID);
         }
 
         internal override void PerformPostDiscoverySetup() {
@@ -213,7 +217,7 @@ namespace Twitchmata {
             var apiRedemption = e.RewardRedeemed.Redemption;
             var redemption = this.RedemptionFromAPIRedemption(apiRedemption);
             if (this.UnmanagedRewards.ContainsKey(apiRedemption.Reward.Title)) {
-                this.UnmanagedRewards[apiRedemption.Reward.Title](redemption);
+                this.UnmanagedRewards[apiRedemption.Reward.Title](redemption, CustomRewardRedemptionStatus.FULFILLED);
                 return;
             }
 
@@ -230,7 +234,8 @@ namespace Twitchmata {
                 return;
             }
 
-            if (reward.RequiresUserInput && reward.ValidInputs.Count > 0 && reward.ValidInputs.Contains(redemption.UserInput.ToLower()) == false) {
+            if (reward.RequiresUserInput && reward.ValidInputs.Count > 0 &&
+                reward.ValidInputs.Contains(redemption.UserInput.ToLower()) == false) {
                 Logger.LogInfo("Invalid input entered: " + redemption.UserInput);
                 this.CancelRedemption(redemption);
                 return;
@@ -238,14 +243,23 @@ namespace Twitchmata {
 
             //Just make extra sure we don't redeem
             if (apiRedemption.Status == "CANCELED") {
+                if (reward.InvokesCallbackIfCanceled) {
+                    reward.Callback(redemption, CustomRewardRedemptionStatus.CANCELED);
+                }
+
                 return;
             }
 
-            if ((apiRedemption.Status == "UNFULFILLED") && (reward.AutoFulfills == true)) { 
-                this.FulfillRedemption(redemption);
+            if (apiRedemption.Status == "UNFULFILLED") {
+                if (reward.AutoFulfills == true) {
+                    this.FulfillRedemption(redemption);
+                    return;
+                }
+                reward.Callback(redemption, CustomRewardRedemptionStatus.UNFULFILLED);
+                return;
             }
 
-            reward.Callback(redemption);
+            reward.Callback(redemption, CustomRewardRedemptionStatus.FULFILLED);
         }
 
         private ChannelPointRedemption RedemptionFromAPIRedemption(Redemption apiRedemption) {
@@ -253,7 +267,38 @@ namespace Twitchmata {
                 RedeemedAt = apiRedemption.RedeemedAt,
                 UserInput = apiRedemption.UserInput,
                 User = this.UserManager.UserForChannelPointsRedeem(apiRedemption),
-                RedemptionID = apiRedemption.Id
+                RedemptionID = apiRedemption.Id,
+            };
+        }
+        
+        private void PubSub_RewardUpdated(object sender, OnRewardRedeemedArgs e) {
+            if ((e.Status != "ACTION_TAKEN") || (this.ManagedRewardsByID.ContainsKey(e.RewardId.ToString()) == false)) {
+                return;
+            }
+            
+            var reward = this.ManagedRewardsByID[e.RewardId.ToString()];
+
+            var task = this.HelixAPI.ChannelPoints.GetCustomRewardRedemptionAsync(this.ChannelID, e.RewardId.ToString(), new List<string>() { e.RedemptionId.ToString() });
+            TwitchManager.RunTask(task, (obj) => {
+                var responseRedemption = obj.Data[0];
+                if (responseRedemption.Status == CustomRewardRedemptionStatus.CANCELED &&
+                    reward.InvokesCallbackIfCanceled == false) {
+                    return;
+                } 
+                
+                var redemption = this.RedemptionFromGetRedemptionResponse(responseRedemption);
+                redemption.Reward = reward;
+
+                reward.Callback(redemption, responseRedemption.Status);
+            });
+        }
+
+        private ChannelPointRedemption RedemptionFromGetRedemptionResponse(RewardRedemption redemption) {
+            return new ChannelPointRedemption() {
+                RedeemedAt = redemption.RedeemedAt,
+                UserInput = redemption.UserInput,
+                User = this.UserManager.UserForChannelPointsRedemptionResponse(redemption),
+                RedemptionID = redemption.Id
             };
         }
         #endregion

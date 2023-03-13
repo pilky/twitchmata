@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Helix.Models.ChannelPoints;
 using TwitchLib.Api.Helix.Models.ChannelPoints.CreateCustomReward;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
@@ -9,7 +10,7 @@ namespace Twitchmata.Models {
     /// Delegate that is invoked when a channel point redemption is successful
     /// </summary>
     /// <param name="redemption">Details of the redemption</param>
-    public delegate void RewardRedemptionCallback(ChannelPointRedemption redemption);
+    public delegate void RewardRedemptionCallback(ChannelPointRedemption redemption, CustomRewardRedemptionStatus status);
 
     /// <summary>
     /// Represents a reward created and managed by your Twitch overlay
@@ -108,6 +109,12 @@ namespace Twitchmata.Models {
         /// Whether the reward's redemption is auto-fulfilled by Twitchmata
         /// </summary>
         public bool AutoFulfills { get; set; } = true;
+
+
+        /// <summary>
+        /// If true, then the callback you associated with the reward will be called even if the redemption is canceled 
+        /// </summary>
+        public bool InvokesCallbackIfCanceled { get; set; } = false;
 
         #endregion
 
