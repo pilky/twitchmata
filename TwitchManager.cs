@@ -114,6 +114,7 @@ namespace Twitchmata {
 
         private bool HasStarted = false;
         private void Start() {
+            ThreadDispatcher.EnsureCreated("InvokeInternal");
             this.HasStarted = true;
             if (this.PersistencePath == null || this.PersistencePath == "") {
                 this.PersistencePath = Application.persistentDataPath;
@@ -145,7 +146,6 @@ namespace Twitchmata {
 
         #region Threading Helpers
         internal static void RunTask<T>(Task<T> func, Action<T> action, Action<Exception> errorAction = null) {
-            ThreadDispatcher.EnsureCreated("InvokeInternal");
             func.ContinueWith(delegate (Task<T> x) {
                 try {
                     T value = x.Result;
