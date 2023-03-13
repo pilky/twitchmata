@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Helix.Models.ChannelPoints;
@@ -6,13 +5,8 @@ using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomRewardRedemptionStatu
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
 using TwitchLib.Unity;
-using UnityEngine;
-using System.Threading;
-using UnityEngine.Events;
-using TwitchLib.Api.Helix.Models.ChannelPoints.CreateCustomReward;
 using Twitchmata.Models;
 using TwitchLib.Api.Helix.Models.ChannelPoints.GetCustomReward;
-using System;
 using System.Linq;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
 

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using TwitchLib.Api.Core;
-using TwitchLib.Api.Core.Models.Undocumented.Chatters;
-using TwitchLib.Api.Helix.Models.Chat;
-using TwitchLib.Api.Helix.Models.Chat.GetChatters;
 using TwitchLib.Client.Events;
 using TwitchLib.Unity;
 using Twitchmata.Models;

@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TwitchLib.Api.Core.Extensions.System;
-using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
 using TwitchLib.Unity;
-using UnityEngine;
 
 namespace Twitchmata {
     /// <summary>

@@ -1,11 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TwitchLib.PubSub.Events;
-using TwitchLib.PubSub.Models.Responses.Messages;
-using System.Threading.Tasks;
 using TwitchLib.Unity;
-using Twitchmata;
 using Twitchmata.Models;
 using System;
 using TwitchLib.Api.Core.Extensions.System;

@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEditor;
 using UnityEngine.UIElements;
 using System;
-using System.Web;
-using Twitchmata;
 
 namespace Twitchmata {
     public class TwitchmataAuthentication : EditorWindow {

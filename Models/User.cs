@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Twitchmata.Models {
+﻿namespace Twitchmata.Models {
     /// <summary>
     /// Details about a user received from an API callback
     /// </summary>

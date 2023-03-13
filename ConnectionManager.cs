@@ -1,18 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TwitchLib.Unity;
 using TwitchLib.PubSub.Events;
-using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomRewardRedemptionStatus;
-using TwitchLib.Api.Core.Enums;
-using TwitchLib.Api;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Events;
-using System.Threading.Tasks;
-using TwitchLib.PubSub.Models.Responses;
-using TwitchLib.Api.Auth;
 using System;
-using TwitchLib.Communication.Events;
 
 namespace Twitchmata {
     public class ConnectionManager {

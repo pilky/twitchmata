@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using TwitchLib.PubSub.Events;
-using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
 using TwitchLib.Unity;
-using UnityEngine;
 
 namespace Twitchmata {
     /// <summary>

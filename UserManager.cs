@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TwitchLib.Api.Helix.Models.ChannelPoints;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelVIPs;
-using TwitchLib.Api.Helix.Models.Common;
 using TwitchLib.Api.Helix.Models.Moderation.GetModerators;
-using TwitchLib.Api.Helix.Models.Subscriptions;
 using TwitchLib.Client.Models;
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Models.Responses.Messages;
 using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
 using Twitchmata.Models;
-using UnityEngine;
 
 namespace Twitchmata {
     public class UserManager {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Twitchmata.Models {
+﻿namespace Twitchmata.Models {
     /// <summary>
     /// Details of a Twitch subscription
     /// </summary>
