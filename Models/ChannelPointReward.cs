@@ -3,6 +3,7 @@ using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Helix.Models.ChannelPoints;
 using TwitchLib.Api.Helix.Models.ChannelPoints.CreateCustomReward;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
+using UnityEngine;
 
 namespace Twitchmata.Models {
     /// <summary>
@@ -115,6 +116,31 @@ namespace Twitchmata.Models {
         /// </summary>
         public bool InvokesCallbackIfCanceled { get; set; } = false;
 
+        #endregion
+        
+        #region Stats
+
+        /// <summary>
+        /// A list of all fulfilled redemptions of this managed reward this stream
+        /// </summary>
+        public List<ChannelPointRedemption> RedemptionsThisStream = new List<ChannelPointRedemption>();
+
+        internal void HandleRedemption(ChannelPointRedemption redemption, CustomRewardRedemptionStatus status) {
+            redemption.Reward = this;
+            
+            Debug.Log("Handle Redemption: " + status);
+            
+            if ((this.InvokesCallbackIfCanceled == false) && (status == CustomRewardRedemptionStatus.CANCELED)) {
+                return;
+            }
+
+            if (status == CustomRewardRedemptionStatus.FULFILLED) {
+                this.RedemptionsThisStream.Add(redemption);
+            }
+
+            this.Callback(redemption, status);
+        }
+        
         #endregion
 
 

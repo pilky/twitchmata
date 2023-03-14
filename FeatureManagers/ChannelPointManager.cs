@@ -9,10 +9,11 @@ using Twitchmata.Models;
 using TwitchLib.Api.Helix.Models.ChannelPoints.GetCustomReward;
 using System.Linq;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
+using UnityEngine;
 
 namespace Twitchmata {
     public class ChannelPointManager : FeatureManager {
-        #region Reward Registration
+        #region Managed Rewards
         /// <summary>
         /// List of managed rewards keyed by their ID
         /// </summary>
@@ -71,7 +72,9 @@ namespace Twitchmata {
             this.RegisterReward(reward, callback);
             return reward;
         }
+        #endregion
 
+        #region Unmanaged Rewards
         /// <summary>
         /// Register an reward that is not managed by Twitchmata
         /// </summary>
@@ -86,7 +89,10 @@ namespace Twitchmata {
         /// <param name="callback">The delegate method to call when the reward is redeemed</param>
         public void RegisterUnmanagedReward(string title, RewardRedemptionCallback callback) {
             this.UnmanagedRewards[title] = callback;
+            this.UnmanagedRewardRedemptionsThisStream[title] = new List<ChannelPointRedemption>();
         }
+
+        public Dictionary<string, List<ChannelPointRedemption>> UnmanagedRewardRedemptionsThisStream { get; private set; } = new Dictionary<string, List<ChannelPointRedemption>>();
         #endregion
 
         #region Reward Groups
@@ -208,10 +214,14 @@ namespace Twitchmata {
         }
 
         private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e) {
+            Debug.Log("Channel points reward redeemed");
             var apiRedemption = e.RewardRedeemed.Redemption;
             var redemption = this.RedemptionFromAPIRedemption(apiRedemption);
             if (this.UnmanagedRewards.ContainsKey(apiRedemption.Reward.Title)) {
-                this.UnmanagedRewards[apiRedemption.Reward.Title](redemption, CustomRewardRedemptionStatus.FULFILLED);
+                this.UnmanagedRewards[apiRedemption.Reward.Title](redemption, this.CustomRewardRedemptionStatusFromString(apiRedemption.Status));
+                if (apiRedemption.Status == "FULFILLED") {
+                    this.UnmanagedRewardRedemptionsThisStream[apiRedemption.Reward.Title].Add(redemption);
+                }
                 return;
             }
 
@@ -237,10 +247,7 @@ namespace Twitchmata {
 
             //Just make extra sure we don't redeem
             if (apiRedemption.Status == "CANCELED") {
-                if (reward.InvokesCallbackIfCanceled) {
-                    reward.Callback(redemption, CustomRewardRedemptionStatus.CANCELED);
-                }
-
+                reward.HandleRedemption(redemption, CustomRewardRedemptionStatus.CANCELED);
                 return;
             }
 
@@ -249,11 +256,21 @@ namespace Twitchmata {
                     this.FulfillRedemption(redemption);
                     return;
                 }
-                reward.Callback(redemption, CustomRewardRedemptionStatus.UNFULFILLED);
+                reward.HandleRedemption(redemption, CustomRewardRedemptionStatus.UNFULFILLED);
                 return;
             }
+            
+            reward.HandleRedemption(redemption, CustomRewardRedemptionStatus.FULFILLED);
+        }
 
-            reward.Callback(redemption, CustomRewardRedemptionStatus.FULFILLED);
+        private CustomRewardRedemptionStatus CustomRewardRedemptionStatusFromString(string status) {
+            if (status == "CANCELED") {
+                return CustomRewardRedemptionStatus.CANCELED;
+            } else if (status == "FULFILLED") {
+                return CustomRewardRedemptionStatus.FULFILLED;
+            }
+
+            return CustomRewardRedemptionStatus.UNFULFILLED;
         }
 
         private ChannelPointRedemption RedemptionFromAPIRedemption(Redemption apiRedemption) {
@@ -266,6 +283,7 @@ namespace Twitchmata {
         }
         
         private void PubSub_RewardUpdated(object sender, OnRewardRedeemedArgs e) {
+            Debug.Log("Rewards Updated");
             if ((e.Status != "ACTION_TAKEN") || (this.ManagedRewardsByID.ContainsKey(e.RewardId.ToString()) == false)) {
                 return;
             }
@@ -275,15 +293,8 @@ namespace Twitchmata {
             var task = this.HelixAPI.ChannelPoints.GetCustomRewardRedemptionAsync(this.ChannelID, e.RewardId.ToString(), new List<string>() { e.RedemptionId.ToString() });
             TwitchManager.RunTask(task, (obj) => {
                 var responseRedemption = obj.Data[0];
-                if (responseRedemption.Status == CustomRewardRedemptionStatus.CANCELED &&
-                    reward.InvokesCallbackIfCanceled == false) {
-                    return;
-                } 
-                
                 var redemption = this.RedemptionFromGetRedemptionResponse(responseRedemption);
-                redemption.Reward = reward;
-
-                reward.Callback(redemption, responseRedemption.Status);
+                reward.HandleRedemption(redemption, responseRedemption.Status);
             });
         }
 

@@ -35,6 +35,11 @@ namespace Twitchmata {
         /// List of users who subscribed or received a gift sub while the overlay has been open
         /// </summary>
         public List<Models.User> SubscribersThisStream { get; private set; } = new List<Models.User>() { };
+
+        /// <summary>
+        /// List of all users who gifted a sub this stream
+        /// </summary>
+        public List<Models.User> GiftersThisStream { get; private set; } = new List<Models.User>() { };
         #endregion
 
 
@@ -147,6 +152,12 @@ namespace Twitchmata {
         private void PubSub_OnChannelSubscription(object sender, OnChannelSubscriptionArgs arg) {
             var user = this.UserManager.UserForSubscriptionNotification(arg.Subscription);
             this.SubscribersThisStream.Add(user);
+            if (user.Subscription?.IsGift == true) {
+                var gifter = user.Subscription.Gifter;
+                if (this.GiftersThisStream.Contains(gifter) == false) {
+                    this.GiftersThisStream.Add(gifter);
+                }
+            }
             this.UserSubscribed(user);
         }
         #endregion
