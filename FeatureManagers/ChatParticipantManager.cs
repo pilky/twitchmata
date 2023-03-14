@@ -112,10 +112,15 @@ namespace Twitchmata {
         #region Internal
         internal override void InitializeClient(Client client) {
             Logger.LogInfo("Initializing Chat Participant Manager");
+            client.OnMessageReceived -= Client_OnMessageReceived;
             client.OnMessageReceived += Client_OnMessageReceived;
+            client.OnUserJoined -= Client_OnUserJoined
             client.OnUserJoined += Client_OnUserJoined;
+            client.OnUserLeft -= Client_OnUserLeft;
             client.OnUserLeft += Client_OnUserLeft;
+            client.OnModeratorJoined -= Client_OnModeratorJoined;
             client.OnModeratorJoined += Client_OnModeratorJoined;
+            client.OnModeratorLeft -= Client_OnModeratorLeft;
             client.OnModeratorLeft += Client_OnModeratorLeft;
         }
 
