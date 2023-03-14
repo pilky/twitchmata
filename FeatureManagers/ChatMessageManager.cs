@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using External.Twitchmata.Models;
 using TwitchLib.Api.Helix.Models.Chat;
 using TwitchLib.Client.Events;
 using TwitchLib.Unity;
+using Twitchmata.Models;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 namespace Twitchmata {
@@ -30,6 +33,55 @@ namespace Twitchmata {
                 Callback = callback,
             };
         }
+        #endregion
+
+        #region Message Matchers
+        private List<MessageMatcher> MessageMatchers = new List<MessageMatcher>();
+        
+        /// <summary>
+        /// Convenience method for adding a match against multiple strings. Useful if multiple variants of a string should have the same outcome (e.g. "hi", "hello", "hey" playing a greeting sound)
+        /// </summary>
+        /// <param name="matches">An array of strings to match</param>
+        public void AddStringMessageMatchers(string[] matches, StringMatchKind kind, MessageMatcherCallback callback, MessageMatcherOptions options = MessageMatcherOptions.None, Permissions permissions = Permissions.Everyone) {
+            foreach (var match in matches) {
+                this.AddStringMessageMatcher(match, kind, callback, options, permissions);
+            }
+        }
+        
+        /// <summary>
+        /// Look for matches against the supplied string in chat messages, invoking the callback if a match is found
+        /// </summary>
+        /// <param name="match">The string to match against</param>
+        /// <param name="kind">The kind of match (Equals, StartsWith, or Contains)</param>
+        /// <param name="callback">A callback to be invoked with the match</param>
+        /// <param name="options">Any options for the match</param>
+        /// <param name="permissions">Permissions for the match</param>
+        public void AddStringMessageMatcher(string match, StringMatchKind kind, MessageMatcherCallback callback, MessageMatcherOptions options = MessageMatcherOptions.None, Permissions permissions = Permissions.Everyone) {
+            var matchWholeWords = ((options & MessageMatcherOptions.FullWordsOnly) == MessageMatcherOptions.FullWordsOnly);
+            var isCaseInsensitive = ((options & MessageMatcherOptions.CaseInsensitive) == MessageMatcherOptions.CaseInsensitive);
+            if (matchWholeWords && (kind == StringMatchKind.StartsWith)) {
+                var regex = new Regex("^" + Regex.Escape(match) + "[.!*?;:]*( |$)", (isCaseInsensitive ? RegexOptions.IgnoreCase : RegexOptions.None));
+                this.AddRegexMessageMatcher(regex, callback, permissions);
+            } else if (matchWholeWords && (kind == StringMatchKind.Contains)) {
+                var regex = new Regex("(^| )[*:;]*" + Regex.Escape(match) + "[.!*?;:]*( |$)", (isCaseInsensitive ? RegexOptions.IgnoreCase : RegexOptions.None));
+                this.AddRegexMessageMatcher(regex, callback, permissions);
+            } else {
+                var matcher = new StringMessageMatcher(match, kind, callback, isCaseInsensitive, permissions);
+                this.MessageMatchers.Add(matcher);
+            }
+        }
+
+        /// <summary>
+        /// Look for matches against the supplied regular expression in chat messages, invoking the callback if a match is found
+        /// </summary>
+        /// <param name="regex">The regular expression to check against</param>
+        /// <param name="callback">A callback to be invoked with the match</param>
+        /// <param name="permissions">Permissions for the match</param>
+        public void AddRegexMessageMatcher(Regex regex, MessageMatcherCallback callback, Permissions permissions = Permissions.Everyone) {
+            var matcher = new RegexMessageMatcher(regex, callback, permissions);
+            this.MessageMatchers.Add(matcher);
+        }
+
         #endregion
 
         
@@ -113,6 +165,49 @@ namespace Twitchmata {
         }
         #endregion
 
+        #region Types
+
+        public delegate void MessageMatcherCallback(MessageMatch match);
+    
+        /// <summary>
+        /// The type of string match
+        /// </summary>
+        public enum StringMatchKind {
+            /// <summary>
+            /// The message must exactly match the match string
+            /// </summary>
+            Equals,
+            /// <summary>
+            /// The message must start with the match string
+            /// </summary>
+            StartsWith,
+            /// <summary>
+            /// The message must contain the match string
+            /// </summary>
+            Contains
+        }
+
+        /// <summary>
+        /// Options for message matchers
+        /// </summary>
+        [Flags]
+        public enum MessageMatcherOptions {
+            /// <summary>
+            /// No options
+            /// </summary>
+            None,
+            /// <summary>
+            /// Match should be case insensitive
+            /// </summary>
+            CaseInsensitive,
+            /// <summary>
+            /// Should only match full words
+            /// </summary>
+            FullWordsOnly
+        }
+
+        #endregion
+
 
         /**************************************************
          * INTERNAL CODE. NO NEED TO READ BELOW THIS LINE *
@@ -125,6 +220,15 @@ namespace Twitchmata {
             Logger.LogInfo("Setting up Chat Command Manager");
             client.OnChatCommandReceived -= Client_OnChatCommandReceived;
             client.OnChatCommandReceived += Client_OnChatCommandReceived;
+
+            client.OnMessageReceived -= Client_OnMessageReceived;
+            client.OnMessageReceived += Client_OnMessageReceived;
+        }
+
+        private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e) {
+            foreach (var messageMatcher in this.MessageMatchers) {
+                messageMatcher.HandleMessage(e.ChatMessage, this.UserManager);
+            }
         }
 
         private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs args) {
