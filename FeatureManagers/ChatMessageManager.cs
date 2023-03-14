@@ -28,7 +28,7 @@ namespace Twitchmata {
         /// <param name="permissions">Permissions for who can invoke the command</param>
         /// <param name="callback">The delegate method to call when this command is invoked</param>
         public void RegisterChatCommand(string command, Permissions permissions, ChatCommandCallback callback) {
-            this.RegisteredCommands[command] = new RegisteredChatCommand() {
+            this.RegisteredCommands[command.ToLower()] = new RegisteredChatCommand() {
                 Permissions = permissions,
                 Callback = callback,
             };
@@ -233,13 +233,13 @@ namespace Twitchmata {
 
         private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs args) {
             var command = args.Command;
-            if (this.RegisteredCommands.ContainsKey(command.CommandText) == false) {
+            if (this.RegisteredCommands.ContainsKey(command.CommandText.ToLower()) == false) {
                 return;
             }
 
             var user = this.UserManager.UserForChatMessage(command.ChatMessage);
 
-            var registeredCommand = this.RegisteredCommands[command.CommandText];
+            var registeredCommand = this.RegisteredCommands[command.CommandText.ToLower()];
             if (user.IsPermitted(registeredCommand.Permissions) == false) {
                 this.SendChatMessage("You don't have permission to use this command");
                 return;
