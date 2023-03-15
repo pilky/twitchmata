@@ -6,7 +6,6 @@ using TwitchLib.Api.Helix.Models.Chat;
 using TwitchLib.Client.Events;
 using TwitchLib.Unity;
 using Twitchmata.Models;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 namespace Twitchmata {
