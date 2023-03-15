@@ -92,6 +92,9 @@ namespace Twitchmata {
             this.UnmanagedRewardRedemptionsThisStream[title] = new List<ChannelPointRedemption>();
         }
 
+        /// <summary>
+        /// Fulfilled Redemptions for any registered unmanaged rewards. The dictionary is keyed by reward title
+        /// </summary>
         public Dictionary<string, List<ChannelPointRedemption>> UnmanagedRewardRedemptionsThisStream { get; private set; } = new Dictionary<string, List<ChannelPointRedemption>>();
         #endregion
 
@@ -214,7 +217,6 @@ namespace Twitchmata {
         }
 
         private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e) {
-            Debug.Log("Channel points reward redeemed");
             var apiRedemption = e.RewardRedeemed.Redemption;
             var redemption = this.RedemptionFromAPIRedemption(apiRedemption);
             if (this.UnmanagedRewards.ContainsKey(apiRedemption.Reward.Title)) {
@@ -283,7 +285,6 @@ namespace Twitchmata {
         }
         
         private void PubSub_RewardUpdated(object sender, OnRewardRedeemedArgs e) {
-            Debug.Log("Rewards Updated");
             if ((e.Status != "ACTION_TAKEN") || (this.ManagedRewardsByID.ContainsKey(e.RewardId.ToString()) == false)) {
                 return;
             }

@@ -29,21 +29,22 @@ public class TwitchChannelPointManager : Twitchmata.ChannelPointManager {
     public ManagedReward ChangeThemeReward;
 
     public override void InitializeFeatureManager() {
-        this.ChangeThemeReward = new ManagedReward("Change Theme", 200, Permissions.Subscribers | Permissions.Mods);
+        this.ChangeThemeReward = this.RegisterReward("Change Theme", 200, ChangeThemeRedeemed, Permissions.Subscribers | Permissions.Mods);
         this.ChangeThemeReward.Description = "Change the theme of Pilkybot's screen. Options include: default, terminal, pixels, bsod";
         this.ChangeThemeReward.RequiresUserInput = true;
         this.ChangeThemeReward.ValidInputs = new List<string>() { "default", "terminal", "pixels", "bsod" };
         this.ChangeThemeReward.GlobalCooldownSeconds = 600;
-        this.RegisterReward(this.ChangeThemeReward, ChangeThemeRedeemed);
     }
 
-    private void ChangeThemeRedeemed(ChannelPointRedemption redemption) {
-        Debug.Log("User redeemed with input: " + redemption.UserInput);
+    private void ChangeThemeRedeemed(ChannelPointRedemption redemption, CustomRewardRedemptionStatus status) {
+        if (status == CustomRewardRedemptionStatus.FULFILLED) {
+            Debug.Log("User redeemed with input: " + redemption.UserInput);
+        }
     }
 }
 ```
 
-You need to keep a reference to the created `ManagedReward` objects if you wish to update them in future. It's recommended you store them in properties in your `ChannelPointManager` subclass
+You need to keep a reference to the created `ManagedReward` objects if you wish to update them in future. It's recommended you store them in properties in your `ChannelPointManager` subclass.
 
 ### Updating Managed Reward
 
@@ -60,3 +61,29 @@ You can also update the cost of a reward like so:
 ```
 this.UpdateRewardCost(this.ChangeThemeReward, 100);
 ```
+
+### Reward Groups
+
+`ManagedRewardGroup` provides an easy way to group multiple rewards so they can be enabled or disabled at once. When you have a group you can enable and disable them like so:
+
+```
+this.DisableGroup(this.TheatreRewards);
+
+this.EnableGroup(this.TheatreRewards);
+```
+
+### Manual Reward Fulfillment
+
+By default `ManagedReward`s that are valid will automatically fulfil themselves, removing them from the reward queue in the Twitch dashboard. You will only receive the callback when the redemption is fulfilled 
+
+However, you sometimes want more control over when a reward is fulfilled, including the ability to cancel it later. In these cases you can disable automatic fulfillment of a particular `ManagedReward` by setting its `AutoFulfills` property to `false`.
+
+When a `ManagedReward` is configured for manual fulfillment the callback will first be called with an `Unfulfilled` status. You can then fulfil at a later time by passing the redemption to the `FulfillReward()` method of `ChannelPointManager`. Alternatively you can cancel the reward (refunding the user's channel points) by calling the `CancelRedemption()` method. Once the redemption has been successfully fulfilled or cancelled you will receive another callback with the updated status.
+
+Manually fulfilled `ManagedReward`s can also be fulfilled from the Twitch dashboard. In these cases Twitchmata will invoke the reward's callback with the updated state. This allows your overlay to respond to changes in the dashboard (for example, a mod rejecting a reward).
+
+### Reward Cancellation
+
+Any invalid managed rewards will be automatically cancelled. Invalid rewards include those where the user doesn't have permission or have entered invalid input. This occurs regardless of whether the `ManagedReward` is set up for automatic or manual fulfillment.
+
+Usually you don't care about responding to a redemption being cancelled, so the callback is not invoked. In cases where you do wish to be notified when a redemption is cancelled you can set the `InvokesCallbackIfCancelled` on the `ManagedReward` to `true`.

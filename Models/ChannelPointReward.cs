@@ -114,7 +114,7 @@ namespace Twitchmata.Models {
         /// <summary>
         /// If true, then the callback you associated with the reward will be called even if the redemption is canceled 
         /// </summary>
-        public bool InvokesCallbackIfCanceled { get; set; } = false;
+        public bool InvokesCallbackIfCancelled { get; set; } = false;
 
         #endregion
         
@@ -128,9 +128,7 @@ namespace Twitchmata.Models {
         internal void HandleRedemption(ChannelPointRedemption redemption, CustomRewardRedemptionStatus status) {
             redemption.Reward = this;
             
-            Debug.Log("Handle Redemption: " + status);
-            
-            if ((this.InvokesCallbackIfCanceled == false) && (status == CustomRewardRedemptionStatus.CANCELED)) {
+            if ((this.InvokesCallbackIfCancelled == false) && (status == CustomRewardRedemptionStatus.CANCELED)) {
                 return;
             }
 
