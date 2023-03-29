@@ -7,7 +7,9 @@ using TwitchLib.Client.Models;
 using TwitchLib.PubSub.Events;
 using TwitchLib.PubSub.Models.Responses.Messages;
 using TwitchLib.PubSub.Models.Responses.Messages.Redemption;
+using TwitchLib.Unity;
 using Twitchmata.Models;
+using UnityEngine;
 
 namespace Twitchmata {
     public class UserManager {
@@ -162,6 +164,7 @@ namespace Twitchmata {
             user.IsSubscriber = chatMessage.IsSubscriber;
             user.IsVIP = chatMessage.IsVip;
             user.IsModerator = chatMessage.IsModerator;
+            user.ChatColor = this.ColorForHex(chatMessage.ColorHex);
             if (user.Subscription != null) {
                 user.Subscription.SubscribedMonthCount = chatMessage.SubscribedMonthCount;
             }
@@ -313,6 +316,21 @@ namespace Twitchmata {
                 return username.Substring(1);
             }
             return username;
+        }
+
+        private Color? ColorForHex(string hexString) {
+            if (hexString.Length != 7) {
+                return null;
+            }
+            var rHex = hexString.Substring(1, 2);
+            var gHex = hexString.Substring(3, 2);
+            var bHex = hexString.Substring(5, 2);
+
+            var r = Convert.ToInt32(rHex, 16);
+            var g = Convert.ToInt32(gHex, 16);
+            var b = Convert.ToInt32(bHex, 16);
+
+            return new Color(r / 255f, g / 255f, b / 255f);
         }
 
         #endregion

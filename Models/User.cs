@@ -1,4 +1,6 @@
-﻿namespace Twitchmata.Models {
+﻿using UnityEngine;
+
+namespace Twitchmata.Models {
     /// <summary>
     /// Details about a user received from an API callback
     /// </summary>
@@ -60,6 +62,9 @@
         /// Details of the user's subscription. Will be null if the user isn't subscribed. May also be null even if the user *is* subscribed.
         /// </summary>
         public Subscription? Subscription { get; internal set; } = null;
+
+        
+        public Color? ChatColor { get; internal set; } = null;
 
 
         #region Permissions
