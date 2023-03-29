@@ -23,7 +23,7 @@ namespace Twitchmata {
         /// <param name="subscriber"></param>
         public virtual void UserSubscribed(Models.User subscriber) {
             if (subscriber.Subscription.IsGift == true) {
-                Logger.LogInfo($"{subscriber.DisplayName} received gift sub from {subscriber.Subscription.Gifter.DisplayName}");
+                Logger.LogInfo($"{subscriber.DisplayName} received gift sub from {subscriber.Subscription.Gifter?.DisplayName ?? "an anonymous gifter"}");
             } else {
                 Logger.LogInfo($"{subscriber.DisplayName} subscribed");
             }
@@ -124,6 +124,44 @@ namespace Twitchmata {
                 sub_plan_name = planName,
                 months = months,
                 context = "subgift",
+                is_gift = true,
+                sub_message = new {
+                    message = message,
+                    emotes = new List<System.Object>() { }
+                },
+                recipient_id = recipientUserID,
+                recipientUserName = recipientUserName,
+                recipientDisplayName = recipientDisplayName
+            });
+        }
+        
+        /// <summary>
+        /// Simulates an anonymous gift subscription
+        /// </summary>
+        /// <param name="recipientDisplayName">The display name of the user receiving the sub</param>
+        /// <param name="recipientUserName">The username of the user receiving the sub</param>
+        /// <param name="recipientUserID">The user ID of the user receiving the sub</param>
+        /// <param name="plan">The subscription plan</param>
+        /// <param name="planName">The name of the subscription plan</param>
+        /// <param name="months">The number of months gifted</param>
+        /// <param name="message">The message associated with the subscription</param>
+        public void Debug_NewAnonymousGiftSubscription(
+            string recipientDisplayName = "ForstyCup",
+            string recipientUserName = "forstycup",
+            string recipientUserID = "19571752",
+            SubscriptionTier plan = SubscriptionTier.Tier1,
+            string planName = "Channel Subscription",
+            int months = 1,
+            string message = "I just gifted a sub!"
+            ) {
+            this.Connection.PubSub_SendTestMessage("channel-subscribe-events-v1.44322889", new {
+                channel_name = this.Connection.ConnectionConfig.ChannelName,
+                channel_id = this.Connection.ChannelID,
+                time = DateTime.Now.ToRfc3339String(),
+                sub_plan = Subscription.StringForTier(plan),
+                sub_plan_name = planName,
+                months = months,
+                context = "anonsubgift",
                 is_gift = true,
                 sub_message = new {
                     message = message,

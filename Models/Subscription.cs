@@ -49,10 +49,10 @@
         public bool IsGift { get; internal set; }
 
         /// <summary>
-        /// A user with details of the gifter, or null if this is not a gift sub
+        /// A user with details of the gifter
         /// </summary>
         /// <remarks>
-        /// This should always be set if the user has a gift sub
+        /// This will be null if this is not a gift subscription or the gift was anonymous
         /// </remarks>
         public User Gifter { get; internal set; }
 

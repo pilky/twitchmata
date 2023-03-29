@@ -132,7 +132,9 @@ namespace Twitchmata {
             Models.User subscriber = null;
             if (subscriptionNotification.IsGift == true) {
                 subscription.IsGift = true;
-                subscription.Gifter = this.ExistingOrNewUser(subscriptionNotification.UserId, subscriptionNotification.Username, subscriptionNotification.DisplayName);
+                if (subscriptionNotification.UserId != null) {
+                    subscription.Gifter = this.ExistingOrNewUser(subscriptionNotification.UserId, subscriptionNotification.Username, subscriptionNotification.DisplayName);
+                }
                 subscriber = this.ExistingOrNewUser(subscriptionNotification.RecipientId, subscriptionNotification.RecipientName, subscriptionNotification.RecipientDisplayName);
             } else {
                 subscription.IsGift = false;
