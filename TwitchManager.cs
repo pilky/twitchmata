@@ -45,6 +45,7 @@ namespace Twitchmata {
                 this.DiscoverFeatureManagers();
                 this.ConnectionManager.Connect();
                 this.Utilities.ConnectionManager = this.ConnectionManager;
+                this.DebugCommands = this.EnableDebugCommands ? new DebugCommands(this) : null;
             });
         }
         #endregion
@@ -92,7 +93,14 @@ namespace Twitchmata {
         }
 
         #endregion
+        
+        #region Debug Commands
+        [Tooltip("Enables chat commands for the broadcaster to debug parts of Twitchmata. Only takes effect on a reconnect")]
+        public bool EnableDebugCommands = false;
 
+        private DebugCommands DebugCommands = null;
+
+        #endregion
 
         #region Utilities
 

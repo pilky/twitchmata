@@ -130,8 +130,8 @@ namespace Twitchmata {
                     emotes = new List<System.Object>() { }
                 },
                 recipient_id = recipientUserID,
-                recipientUserName = recipientUserName,
-                recipientDisplayName = recipientDisplayName
+                recipient_user_name = recipientUserName,
+                recipient_display_name = recipientDisplayName
             });
         }
         
@@ -168,8 +168,8 @@ namespace Twitchmata {
                     emotes = new List<System.Object>() { }
                 },
                 recipient_id = recipientUserID,
-                recipientUserName = recipientUserName,
-                recipientDisplayName = recipientDisplayName
+                recipient_user_name = recipientUserName,
+                recipient_display_name = recipientDisplayName
             });
         }
 
