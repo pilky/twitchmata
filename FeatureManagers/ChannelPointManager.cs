@@ -240,8 +240,9 @@ namespace Twitchmata {
                 return;
             }
 
+            var lowercaseInputs = reward.ValidInputs.Select(input => input.ToLowerInvariant());
             if (reward.RequiresUserInput && reward.ValidInputs.Count > 0 &&
-                reward.ValidInputs.Contains(redemption.UserInput.ToLower()) == false) {
+                lowercaseInputs.Contains(redemption.UserInput.ToLowerInvariant()) == false) {
                 Logger.LogInfo("Invalid input entered: " + redemption.UserInput);
                 this.CancelRedemption(redemption);
                 return;
