@@ -121,11 +121,6 @@ namespace Twitchmata {
         }
 
         private void DiscoverFeatureManagers() {
-            foreach (var manager in this.GetComponents<FeatureManager>()) {
-                manager.Manager = this;
-                this.ConnectionManager.RegisterFeatureManager(manager);
-            }
-
             foreach (var manager in this.GetComponentsInChildren<FeatureManager>()) {
                 manager.Manager = this;
                 this.ConnectionManager.RegisterFeatureManager(manager);
