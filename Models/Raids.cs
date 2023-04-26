@@ -34,4 +34,21 @@ namespace Twitchmata.Models {
         /// </summary>
         public bool IsMature;
     }
+
+    public struct OutgoingRaidUpdate {
+        /// <summary>
+        /// A user representing the target of the raid
+        /// </summary>
+        public User RaidTarget;
+
+        /// <summary>
+        /// A url pointing to the target's profile image
+        /// </summary>
+        public string TargetProfileImage;
+
+        /// <summary>
+        /// The number of viewers taking part in the raid
+        /// </summary>
+        public int ViewerCount;
+    }
 }

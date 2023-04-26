@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using TwitchLib.Unity;
 using TwitchLib.Client.Events;
+using TwitchLib.PubSub.Events;
+using UnityEngine;
 
 namespace Twitchmata {
     /// <summary>
@@ -23,6 +25,31 @@ namespace Twitchmata {
         public virtual void RaidReceived(Models.IncomingRaid raid) {
             Logger.LogInfo($"{raid.Raider.DisplayName} raided with {raid.ViewerCount} viewers");
         }
+
+        /// <summary>
+        /// Fired when an outgoing raid is started or updated
+        /// </summary>
+        /// <param name="raid">Details of the outgoing raid</param>
+        public virtual void RaidUpdated(Models.OutgoingRaidUpdate raid) {
+            Logger.LogInfo($"Preparing to raid {raid.RaidTarget.DisplayName} with {raid.ViewerCount} viewers");
+        }
+
+        /// <summary>
+        /// Fired when an outgoing raid completes
+        /// </summary>
+        /// <param name="raid">Details of the outgoing raid</param>
+        public virtual void RaidGo(Models.OutgoingRaidUpdate raid) {
+            Logger.LogInfo($"Raiding {raid.RaidTarget.DisplayName} with {raid.ViewerCount} viewers");
+        }
+
+        /// <summary>
+        /// Fired when an outgoing raid is cancelled
+        /// </summary>
+        /// <param name="raid">Details of the cancelled raid</param>
+        public virtual void RaidCancelled(Models.OutgoingRaidUpdate raid) {
+            Logger.LogInfo($"Cancelled raid of {raid.RaidTarget.DisplayName}");
+        }
+        
         #endregion
 
         #region Outgoing Raids
@@ -112,28 +139,47 @@ namespace Twitchmata {
 
         #region PubSub
         //Cancelling a raid breaks all of PubSub so this is disabled for now
-        //internal override void InitializePubSub(PubSub pubSub)
-        //{
-        //    Debug.Log("Setting Up Outgoing Raid Notifications");
-        //    pubSub.OnRaidUpdateV2 -= PubSub_OnRaidUpdate;
-        //    pubSub.OnRaidUpdateV2 += PubSub_OnRaidUpdate;
-        //    pubSub.OnRaidGo -= PubSub_OnRaidGo;
-        //    pubSub.OnRaidGo += PubSub_OnRaidGo;
-        //    pubSub.ListenToRaid(this.ChannelID);
-        //}
+        internal override void InitializePubSub(PubSub pubSub)
+        {
+            Debug.Log("Setting Up Outgoing Raid Notifications");
+            pubSub.OnRaidUpdateV2 -= PubSub_OnRaidUpdate;
+            pubSub.OnRaidUpdateV2 += PubSub_OnRaidUpdate;
+            pubSub.OnRaidGo -= PubSub_OnRaidGo;
+            pubSub.OnRaidGo += PubSub_OnRaidGo;
+            pubSub.OnRaidCancel -= PubSub_OnRaidCancel;
+            pubSub.OnRaidCancel += PubSub_OnRaidCancel;
+            pubSub.ListenToRaid(this.ChannelID);
+        }
 
-        //private void PubSub_OnLog(object sender, TwitchLib.PubSub.Events.OnLogArgs e)
-        //{
-        //    Debug.Log("Message: "+ e.Data);
-        //}
+        private void PubSub_OnRaidCancel(object sender, OnRaidCancelArgs args) {
+            var user = this.UserManager.UserForRaidCancelNotification(args);
+            var raid = new Models.OutgoingRaidUpdate() {
+                RaidTarget = user,
+                TargetProfileImage = args.TargetProfileImage,
+                ViewerCount = args.ViewerCount
+            };
+            this.RaidCancelled(raid);
+        }
 
-        //private void PubSub_OnRaidGo(object sender, OnRaidGoArgs e) {
-        //    Debug.Log($"Raid updated {e.TargetDisplayName} {e.ViewerCount} {e.TargetProfileImage}");
-        //}
+        private void PubSub_OnRaidGo(object sender, OnRaidGoArgs args) {
+            var user = this.UserManager.UserForRaidGoNotification(args);
+            var raid = new Models.OutgoingRaidUpdate() {
+                RaidTarget = user,
+                TargetProfileImage = args.TargetProfileImage,
+                ViewerCount = args.ViewerCount
+            };
+            this.RaidGo(raid);
+        }
 
-        //private void PubSub_OnRaidUpdate(object sender, OnRaidUpdateV2Args e) {
-        //    Debug.Log($"Raid updated {e.TargetDisplayName} {e.ViewerCount} {e.TargetProfileImage}");
-        //}
+        private void PubSub_OnRaidUpdate(object sender, OnRaidUpdateV2Args args) {
+            var user = this.UserManager.UserForRaidUpdateNotification(args);
+            var raid = new Models.OutgoingRaidUpdate() {
+                RaidTarget = user,
+                TargetProfileImage = args.TargetProfileImage,
+                ViewerCount = args.ViewerCount
+            };
+            this.RaidUpdated(raid);
+        }
         #endregion
     }
 }

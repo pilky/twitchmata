@@ -119,6 +119,18 @@ namespace Twitchmata {
             return user;
         }
 
+        internal Models.User UserForRaidUpdateNotification(OnRaidUpdateV2Args raidNotification) {
+            return this.ExistingOrNewUser(raidNotification.TargetChannelId, raidNotification.TargetLogin, raidNotification.TargetDisplayName);
+        }
+
+        internal Models.User UserForRaidCancelNotification(OnRaidCancelArgs raidNotification) {
+            return this.ExistingOrNewUser(raidNotification.TargetChannelId, raidNotification.TargetLogin, raidNotification.TargetDisplayName);
+        }
+
+        internal Models.User UserForRaidGoNotification(OnRaidGoArgs raidNotification) {
+            return this.ExistingOrNewUser(raidNotification.TargetChannelId, raidNotification.TargetLogin, raidNotification.TargetDisplayName);
+        }
+
         internal Models.User UserForFollowNotification(OnFollowArgs followNotification) {
             return this.ExistingOrNewUser(followNotification.UserId, followNotification.Username, followNotification.DisplayName);
         }
