@@ -25,7 +25,6 @@ Twitchmata currently has support for dealing with Follows, Subscribers, Raids, B
 
 You can find out more about setting up Twitchmata in your overlay [here](Documentation/Setup.md)
 
-
 ## Usage Overview
 
 Twitchmata has a few key classes:
@@ -69,3 +68,18 @@ Various parts of Twitchmata collect statistics during your stream. You can find 
 ### Debugging
 
 Twitchmata provides various methods to help with debugging events. You more info in the [Debugging documentation](Documentation/Debugging.md)
+
+
+## Troubleshooting
+Below are some common issues people can encounter while using Twitchmata
+
+#### Authentication window doesn't show in Unity
+Make sure that you have the GameObject containing the `TwitchManager` script selected in your Hierarchy. Also check the window is not hidden behind another window or is on another screen.
+
+#### Saving authentication URL fails
+Double-check you have copied the entire URL from your browser's address bar before pasting into the text field to save.
+
+Also ensure that, in your application settings in the Twitch Developer Console, the URL is set to `http://localhost:3000`. Make sure there are no additional spaces, trailing `/`, etc
+
+#### Unity complains about multiple copies of Newtonsoft
+In most cases you can delete the version of Newtonsoft in Twitchmata's Plugins folder to fix this

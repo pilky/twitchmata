@@ -1,12 +1,20 @@
-﻿# FollowersManager
+﻿# RaidManager
 
-A `FollowersManager` allows you to manage follow events
+A `RaidManager` allows you to start and cancel raids, and respond to raid events
 
 ## Respond to Incoming Raid
 
 ```
 public override void RaidReceived(Models.IncomingRaid raid) {
 	Debug.Log($"{raid.Raider.DisplayName} raided with {raid.ViewerCount}");
+}
+```
+
+## Respond to Outgoing Raid
+
+```
+public override void RaidUpdated(Models.OutgoingRaidUpdate raid) {
+    Debug.Log($"Raiding {raid.RaidTarget.DisplayName} with {raid.ViewerCount} viewers");
 }
 ```
 
@@ -29,3 +37,4 @@ public SetupRaid(string username) {
 ```
 this.RaidManager.CancelRaid();
 ```
+
