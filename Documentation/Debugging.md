@@ -36,3 +36,15 @@ You can call any of these methods without any arguments to get a standard test e
 ### Raids
 
 `RaidManager` offers the `Debug_IncomingRaid()` method to simulate receiving a raid
+
+## Debug Chat Commands
+
+Twitchmata also offers the ability to trigger a simplified version of the feature manager debug functionality through chat commands. To enable these simply set `TwitchManager.EnableDebugCommands` to `true` or click the checkbox in the Unity inspector.
+
+Once enabled you get access to the following commands:
+
+- `!debug-bits` simulates user sending in bits. You can pass in a bit amount and a twitch username to customise the amount and sender (e.g. `!debug-bits 200 pilkycrc`)
+- `!debug-follow` simulates a user following. You can pass in a twitch username simulate that user following (e.g. `!debug-follow doigswift`)
+- `!debug-sub` simulates a user subscribing. You can pass in the tier (either `tier1`, `tier2`, `tier3`, or `prime`) and a twitch username to simulate that user subscribing at that tier (e.g. `!debug-sub tier3 spacepiratefenrir`)
+- `!debug-gift-sub` simulates a user gifting a sub to another user. You can pass in the tier, the recipient's twitch username, and the gifter's twitcher username (or `anon` for an anonymous gift sub) to simulate a sub from gifter to recipient at that tier (e.g. `!debug-gift-sub tier1 renerighthere dinocrys`)
+- `!debug-raid` simulates a user raiding the channel. You can pass in a viewer count and a twitch username for the raider to simulate that user raiding with the number of viewers (e.g. `!sub-raid 26 lanmana`)
