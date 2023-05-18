@@ -23,7 +23,7 @@ Twitchmata currently has support for dealing with Follows, Subscribers, Raids, B
 
 ## Setup
 
-You can find out more about setting up Twitchmata in your overlay [here](Documentation/Setup.md)
+You can find out more about setting up Twitchmata in your overlay [here](Documentation~/Setup.md)
 
 ## Usage Overview
 
@@ -33,7 +33,7 @@ Twitchmata has a few key classes:
 - `ConnectionManager` handles the connection to Twitch through various API endpoint. You mostly don't need to touch this, but it lets you easily drop down to using TwitchLib directly if you need some functionality Twitchmata does not provide.
 - `UserManager` holds a list of users known to Twitchmata. Most APIs will give you a `User` type with information about who invoked it
 - `FeatureManagers` are where most of your custom code will go. See below on how to use them.
-- `Utilities` provides additional functionality that doesn't fit in a FeatureManager (e.g. downloading a user's avatar as a `Texture2D`). [(documentation)](Documentation/Utilities.md)
+- `Utilities` provides additional functionality that doesn't fit in a FeatureManager (e.g. downloading a user's avatar as a `Texture2D`). [(documentation)](Documentation~/Utilities.md)
 
 ### Feature Managers
 
@@ -51,23 +51,23 @@ Twitchmata provides access to various bits of Twitch functionality through Featu
 
 
 Your MyFollowerManager class will now be notified when a user follows your channel and keep a list of everyone who followed while your overlay was open. Twitchmata provides Feature Managers for the following:
-- Followers [(documentation)](Documentation/Followers.md)
-- Subscribers [(documentation)](Documentation/Subscribers.md)
-- Raids [(documentation)](Documentation/Raids.md)
-- Channel Points/Rewards [(documentation)](Documentation/ChannelPoints.md)
-- Chat Messages [(documentation)](Documentation/ChatMessages.md)
-- Chat Participants [(documentation)](Documentation/ChatParticipants.md)
-- Bits [(documentation)](Documentation/Bits.md)
+- Followers [(documentation)](Documentation~/Followers.md)
+- Subscribers [(documentation)](Documentation~/Subscribers.md)
+- Raids [(documentation)](Documentation~/Raids.md)
+- Channel Points/Rewards [(documentation)](Documentation~/ChannelPoints.md)
+- Chat Messages [(documentation)](Documentation~/ChatMessages.md)
+- Chat Participants [(documentation)](Documentation~/ChatParticipants.md)
+- Bits [(documentation)](Documentation~/Bits.md)
 
 
 ### Statistics
 
-Various parts of Twitchmata collect statistics during your stream. You can find out about the stats collected and how to access them in the [Statistics documentation](Documentation/Statistics.md)
+Various parts of Twitchmata collect statistics during your stream. You can find out about the stats collected and how to access them in the [Statistics documentation](Documentation~/Statistics.md)
 
 
 ### Debugging
 
-Twitchmata provides various methods to help with debugging events. You more info in the [Debugging documentation](Documentation/Debugging.md)
+Twitchmata provides various methods to help with debugging events. You more info in the [Debugging documentation](Documentation~/Debugging.md)
 
 
 ## Troubleshooting

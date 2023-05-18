@@ -4,9 +4,19 @@
 
 ## 1. Get Twitchmata
 
-The first step is to download Twitchmata. You can find the latest version [here](https://github.com/pilky/twitchmata/releases). Download the zip file of the release at the top of the page.
+The first step is to download Twitchmata. Twitchmata is set up as a Unity package so you can get it in one of two ways.
 
-Once downloaded you need to unzip the release. Next, create a folder in your Unity project's Assets folder and call it "External". Drag the unzipped release of Twitchmata into this External folder (ensure folder is just called "Twitchmata").
+### Use Git URL (Recommended)
+
+In Unity, go to `Window` > `Package Manager`. Then in the top-left of the package manager you should find a `+` button. Click on that and select `Add package from git URL…`. Paste the git URL for this project (`https://github.com/pilky/twitchmata.git`) into the field that appears and click `Add`. This will add Twitchmata to your project and make it easy to update to new versions.
+
+### Download ZIP
+
+Alternatively you can download a ZIP of the Twitchmata package. You can find the latest version [here](https://github.com/pilky/twitchmata/releases). Download the zip file of the release at the top of the page. Once downloaded you need to unzip the release. Move the folder to a location inside of your project, but outside of the `Assets` or `Packages` folders.
+
+Next, in Unity, go to `Window` > `Package Manager`. In the top-left of the Package Manager you should find a `+` button. Click on that and select `Add package from disk…`. This will open a file browser. Navigate to the Twitchmata folder you unzipped. You should find a `package.json` file inside of it. Select this with the file browser window and click "Open". This will add Twitchmata to the project.
+
+Note, you need to manually download updates to Twitchmata through this method.
 
 ## 2. Setting up the Game Object
 

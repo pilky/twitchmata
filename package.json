@@ -4,6 +4,7 @@
   "displayName": "Twitchmata",
   "description": "A wrapper for TwitchLib to simplify integrating Virtual Interactive Puppet Overlays with Twitch",
   "unity": "2022.1",
+  "unityRelease": "0f1",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.1"
  },
