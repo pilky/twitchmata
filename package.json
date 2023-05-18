@@ -1,0 +1,20 @@
+{
+  "name": "me.pilky.twitchmata",
+  "version": "1.0.0",
+  "displayName": "Twitchmata",
+  "description": "A wrapper for TwitchLib to simplify integrating Virtual Interactive Puppet Overlays with Twitch",
+  "unity": "2022.1",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+ },
+ "keywords": [
+    "twitch",
+    "vipo",
+    "animata"
+  ],
+  "author": {
+    "name": "Martin Pilkington",
+    "email": "contact@mcubedsw.com",
+    "url": "https://pilky.me"
+  }
+}

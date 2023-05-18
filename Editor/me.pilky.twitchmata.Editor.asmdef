@@ -1,0 +1,16 @@
+{
+    "name": "me.pilky.twitchmata.Editor",
+    "rootNamespace": "Twitchmata",
+    "references": [
+        "GUID:671581bd6df454fbc9ca1933e77fcb77"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
