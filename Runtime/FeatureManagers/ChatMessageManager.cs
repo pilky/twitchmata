@@ -27,6 +27,10 @@ namespace Twitchmata {
         /// <param name="permissions">Permissions for who can invoke the command</param>
         /// <param name="callback">The delegate method to call when this command is invoked</param>
         public void RegisterChatCommand(string command, Permissions permissions, ChatCommandCallback callback) {
+            this.RegisterChatCommand(command, permissions, (arguments, user, message) => callback(arguments, user));
+        }
+
+        public void RegisterChatCommand(string command, Permissions permissions, ChatCommandMessageCallback callback) {
             this.RegisteredCommands[command.ToLower()] = new RegisteredChatCommand() {
                 Permissions = permissions,
                 Callback = callback,
@@ -244,7 +248,7 @@ namespace Twitchmata {
                 return;
             }
 
-            registeredCommand.Callback.Invoke(command.ArgumentsAsList, user);
+            registeredCommand.Callback.Invoke(command.ArgumentsAsList, user, args.Command.ChatMessage);
         }
         #endregion
 

@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.1] - 2023-08-18
+
+### Added
+- Added override for `ChatMessageManager.RegisterChatCommand()` which has a callback which returns a message
+
 ## [1.0.1] - 2023-05-20
 
 ### Fixed

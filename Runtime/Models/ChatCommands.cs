@@ -8,8 +8,10 @@ namespace Twitchmata {
     /// <param name="user">The user who invoked the command</param>
     public delegate void ChatCommandCallback(List<string> arguments, Models.User user);
 
+    public delegate void ChatCommandMessageCallback(List<string> arguments, Models.User user, TwitchLib.Client.Models.ChatMessage message);
+
     internal struct RegisteredChatCommand {
         internal Permissions Permissions;
-        internal ChatCommandCallback Callback;
+        internal ChatCommandMessageCallback Callback;
     }
 }
