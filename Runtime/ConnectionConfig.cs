@@ -27,6 +27,19 @@ namespace Twitchmata {
         /// </remarks>
         [Tooltip("The name of the bot to use when communicating with chat")]
         public string BotName;
+        
+        /// <summary>
+        /// Post a Message in the Channel after the connection was successful
+        /// </summary>
+        [Tooltip("Post a Message in the Channel after the connection was successful")]
+        public bool PostConnectMessage;
+
+        /// <summary>
+        /// The Message that gets send on successful connection
+        /// </summary>
+        ///
+        [Tooltip("The Message that gets posted in the Channel after the connection was successful")]
+        public string ConnectMessage;
     }
 }
 
