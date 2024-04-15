@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using External.Twitchmata.Models;
 using TwitchLib.Api.Helix.Models.Chat;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Models;
 using TwitchLib.Unity;
 using Twitchmata.Models;
 using UnityEngine;
@@ -19,6 +20,19 @@ namespace Twitchmata {
     /// See <code>RegisterChatCommand()</code> for details on how to set up commands
     /// </remarks>
     public class ChatMessageManager : FeatureManager {
+        
+        #region ChatMessages
+
+        /// <summary>
+        /// Fired when a user sends a message
+        /// </summary>
+        public virtual void ChatMessageReceived(User user, ChatMessage chatMessage)
+        {
+            Logger.LogInfo($"{user.DisplayName}: {chatMessage.Message}"); 
+        }
+
+        #endregion
+        
         #region Command Registration
         /// <summary>
         /// Register a chat command that viewers can invoke
@@ -232,6 +246,8 @@ namespace Twitchmata {
             foreach (var messageMatcher in this.MessageMatchers) {
                 messageMatcher.HandleMessage(e.ChatMessage, this.UserManager);
             }
+            var user = this.UserManager.UserForChatMessage(e.ChatMessage);
+            ChatMessageReceived(user ,e.ChatMessage);
         }
 
         private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs args) {
