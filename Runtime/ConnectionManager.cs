@@ -70,7 +70,7 @@ namespace Twitchmata {
         private void SetupClient() {
             this.Client = new Client();
             this.Client.OnIncorrectLogin += Client_OnIncorrectLogin;
-            this.Client.OnJoinedChannel += ClientOnOnJoinedChannel;
+            this.Client.OnJoinedChannel += ClientOnJoinedChannel;
         }
 
         private void SetupAPIAndPubSub() {
@@ -107,8 +107,7 @@ namespace Twitchmata {
             Logger.LogError("Invalid bot login, need to re-authenticate");
         }
 
-        private void ClientOnOnJoinedChannel(object sender, OnJoinedChannelArgs e)
-        {
+        private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) {
             Logger.LogInfo($"Joined Channel {e.Channel} with User {e.BotUsername}");
             if (ConnectionConfig.PostConnectMessage)
             {
