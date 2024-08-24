@@ -59,6 +59,8 @@ namespace Twitchmata {
             ClientID = "",
             ChannelName = "",
             BotName = "",
+            PostConnectMessage = false,
+            ConnectMessage =  "Twichmata connected!"
         };
 
         /// <summary>
