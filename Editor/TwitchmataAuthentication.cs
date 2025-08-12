@@ -90,6 +90,8 @@ namespace Twitchmata {
             "moderator:read:chatters",
             "moderator:read:warnings",
             "moderator:read:moderators",
+	    "channel:manage:moderators",
+	    "moderator:manage:banned_users",
             "moderator:read:vips",
             "moderator:manage:shoutouts",
             "moderator:manage:announcements",
