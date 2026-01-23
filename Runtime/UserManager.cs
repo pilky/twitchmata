@@ -299,7 +299,7 @@ namespace Twitchmata {
 
         #region Fetching Initial User Info
         internal string BroadcasterID { get; private set; }
-        internal string BotID { get; private set; }
+        internal string BotID { get; set; }
         internal void PerformSetup(Action callback) {
             var channelName = this.ConnectionManager.ConnectionConfig.ChannelName;
             var channelID = this.ConnectionManager.Secrets.ChannelIDForChannel(channelName);
@@ -332,6 +332,10 @@ namespace Twitchmata {
             }
 
             var botID = this.ConnectionManager.Secrets.ChannelIDForChannel(botName);
+
+
+
+
             if (botID != null && botID.Length > 0) {
                 
                 this.BotID = botID;

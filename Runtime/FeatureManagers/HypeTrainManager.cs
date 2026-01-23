@@ -111,7 +111,7 @@ namespace Twitchmata
             
             var createSubBegin = this.HelixEventSub.CreateEventSubSubscriptionAsync(
                 "channel.hype_train.begin",
-                "1",
+                "2",
                 new Dictionary<string, string> {
                     { "broadcaster_user_id", this.Manager.ConnectionManager.ChannelID },
                 },
@@ -119,6 +119,7 @@ namespace Twitchmata
                 this.Connection.ConnectionConfig.ClientID,
                 this.Manager.ConnectionManager.Secrets.AccountAccessToken
             );
+
             TwitchManager.RunTask(createSubBegin, (response) =>
             {
                 Logger.LogInfo("channel.hype_train.begin subscription created.");
@@ -129,7 +130,7 @@ namespace Twitchmata
             
             var createSubProgress = this.HelixEventSub.CreateEventSubSubscriptionAsync(
                 "channel.hype_train.progress",
-                "1",
+                "2",
                 new Dictionary<string, string> {
                     { "broadcaster_user_id", this.Manager.ConnectionManager.ChannelID },
                 },
@@ -147,7 +148,7 @@ namespace Twitchmata
             
             var createSubEnd = this.HelixEventSub.CreateEventSubSubscriptionAsync(
                 "channel.hype_train.end",
-                "1",
+                "2",
                 new Dictionary<string, string> {
                     { "broadcaster_user_id", this.Manager.ConnectionManager.ChannelID },
                 },

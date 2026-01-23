@@ -120,7 +120,10 @@ namespace Twitchmata {
         #region Connection Management (private)
         TwitchManager() {
             Logger.TwitchManager = this;
+            instance = this;
         }
+
+        private static TwitchManager instance;
 
         private bool HasStarted = false;
         private void Start() {
@@ -171,6 +174,23 @@ namespace Twitchmata {
                         action(value);
                     });
                 } catch (Exception e) {
+                    /*Logger.LogError("Current main account ID: " + instance.ConnectionManager.ChannelID);
+                    Logger.LogError("Current bot account ID: " + instance.ConnectionManager.BotID);
+                    Logger.LogError("Current main access token: " + instance.ConnectionManager.Secrets.AccountAccessToken);
+                    Logger.LogError("Current bot access token: " + instance.ConnectionManager.Secrets.BotAccessToken);
+                    Logger.LogError("Current UserManager broadcaster ID: " + instance.ConnectionManager.UserManager.BroadcasterID);
+                    Logger.LogError("Current UserManager bot ID: " + instance.ConnectionManager.UserManager.BotID);
+                    Logger.LogError("Current API saved access token: " + instance.ConnectionManager.API.Settings.AccessToken);
+                    Logger.LogError("Current Helix saved access token: " + instance.ConnectionManager.API.Helix.Settings.AccessToken);
+                    Logger.LogError("Current requested bot name: " + instance.ConnectionConfig.BotName);
+                    Logger.LogError("Current chat client credentials username: " + instance.ConnectionManager.Client.ConnectionCredentials.TwitchUsername);
+                    Logger.LogError("Current chat client token: " + instance.ConnectionManager.Client.ConnectionCredentials.TwitchOAuth);
+
+                    instance.UserManager.FetchUserWithUserName(instance.ConnectionConfig.BotName, (user) =>
+                    {
+                        Logger.LogError("Bot channel ID from username: " + user.UserId);
+                    });*/
+
                     if (errorAction != null) {
                         errorAction(e);
                         return;
@@ -190,6 +210,21 @@ namespace Twitchmata {
                         action();
                     });
                 } catch (Exception e) {
+                    /*Logger.LogError("Current main account ID: " + instance.ConnectionManager.ChannelID);
+                    Logger.LogError("Current bot account ID: " + instance.ConnectionManager.BotID);
+                    Logger.LogError("Current main access token: " + instance.ConnectionManager.Secrets.AccountAccessToken);
+                    Logger.LogError("Current bot access token: " + instance.ConnectionManager.Secrets.BotAccessToken);
+                    Logger.LogError("Current UserManager broadcaster ID: " + instance.ConnectionManager.UserManager.BroadcasterID);
+                    Logger.LogError("Current UserManager bot ID: " + instance.ConnectionManager.UserManager.BotID);
+                    Logger.LogError("Current API saved access token: " + instance.ConnectionManager.API.Settings.AccessToken);
+                    Logger.LogError("Current Helix saved access token: " + instance.ConnectionManager.API.Helix.Settings.AccessToken);
+                    Logger.LogError("Current requested bot name: " + instance.ConnectionConfig.BotName);
+                    Logger.LogError("Current chat client credentials username: " + instance.ConnectionManager.Client.ConnectionCredentials.TwitchUsername);
+                    Logger.LogError("Current chat client token: " + instance.ConnectionManager.Client.ConnectionCredentials.TwitchOAuth);
+                    instance.UserManager.FetchUserWithUserName(instance.ConnectionConfig.BotName, (user) =>
+                    {
+                        Logger.LogError("Bot channel ID from username: " + user.UserId);
+                    });*/
                     if (errorAction != null) {
                         errorAction(e);
                         return;

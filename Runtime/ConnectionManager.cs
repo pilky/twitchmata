@@ -92,6 +92,22 @@ namespace Twitchmata {
             this.SetupEventSub();
             this.SetupClient();
             this.UserManager = new UserManager(this);
+
+            TwitchManager.RunTask(this.API.Auth.ValidateAccessTokenAsync(this.Secrets.BotAccessToken), (vali) =>
+            {
+                this.UserManager.FetchUserWithID(vali.UserId, (user) =>
+                {
+                    if (this.BotID != vali.UserId && !string.IsNullOrWhiteSpace(this.ConnectionConfig.BotName))
+                    {
+                        Logger.LogWarning("Bot user mismatch. Requested bot was " + this.ConnectionConfig.BotName + " but bot access token is connected to " + user.UserName + ". Setting bot credentials to the access token version.");
+                        this.UserManager.BotID = vali.UserId;
+                        var conf = this.ConnectionConfig;
+                        conf.BotName = user.UserName;
+                        this.ConnectionConfig = conf;
+                    }
+                });
+
+            });
             
         }
 
