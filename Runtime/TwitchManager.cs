@@ -174,7 +174,7 @@ namespace Twitchmata {
                         action(value);
                     });
                 } catch (Exception e) {
-                    Logger.LogError("Current main account ID: " + instance.ConnectionManager.ChannelID);
+                    /*Logger.LogError("Current main account ID: " + instance.ConnectionManager.ChannelID);
                     Logger.LogError("Current bot account ID: " + instance.ConnectionManager.BotID);
                     Logger.LogError("Current main access token: " + instance.ConnectionManager.Secrets.AccountAccessToken);
                     Logger.LogError("Current bot access token: " + instance.ConnectionManager.Secrets.BotAccessToken);
@@ -189,7 +189,7 @@ namespace Twitchmata {
                     instance.UserManager.FetchUserWithUserName(instance.ConnectionConfig.BotName, (user) =>
                     {
                         Logger.LogError("Bot channel ID from username: " + user.UserId);
-                    });
+                    });*/
 
                     if (errorAction != null) {
                         errorAction(e);
@@ -210,7 +210,7 @@ namespace Twitchmata {
                         action();
                     });
                 } catch (Exception e) {
-                    Logger.LogError("Current main account ID: " + instance.ConnectionManager.ChannelID);
+                   /* Logger.LogError("Current main account ID: " + instance.ConnectionManager.ChannelID);
                     Logger.LogError("Current bot account ID: " + instance.ConnectionManager.BotID);
                     Logger.LogError("Current main access token: " + instance.ConnectionManager.Secrets.AccountAccessToken);
                     Logger.LogError("Current bot access token: " + instance.ConnectionManager.Secrets.BotAccessToken);
@@ -224,7 +224,7 @@ namespace Twitchmata {
                     instance.UserManager.FetchUserWithUserName(instance.ConnectionConfig.BotName, (user) =>
                     {
                         Logger.LogError("Bot channel ID from username: " + user.UserId);
-                    });
+                    });*/
                     if (errorAction != null) {
                         errorAction(e);
                         return;
