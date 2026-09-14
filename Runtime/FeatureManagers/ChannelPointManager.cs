@@ -207,7 +207,7 @@ namespace Twitchmata {
 
         #region Internal
 
-        internal override void InitializeEventSub(EventSubWebsocketClient eventSub)
+        internal override void InitializeEventSub(Twitchmata.Adapters.EventSubWebsocketClient eventSub)
         {
             eventSub.ChannelPointsCustomRewardRedemptionAdd -= EventSub_ChannelPointsCustomRewardRedemptionAdd;
             eventSub.ChannelPointsCustomRewardRedemptionAdd += EventSub_ChannelPointsCustomRewardRedemptionAdd;

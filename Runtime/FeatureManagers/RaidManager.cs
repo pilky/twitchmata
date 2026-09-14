@@ -144,7 +144,7 @@ namespace Twitchmata {
 
         #endregion
 
-        internal override void InitializeEventSub(EventSubWebsocketClient eventSub)
+        internal override void InitializeEventSub(Twitchmata.Adapters.EventSubWebsocketClient eventSub)
         {
             //eventSub.ChannelChatNotification += EventSub_ChannelChatNotification;
             eventSub.ChannelModerate += EventSub_ChannelModerate;

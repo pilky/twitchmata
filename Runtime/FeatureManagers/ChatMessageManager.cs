@@ -237,7 +237,7 @@ namespace Twitchmata {
         private Dictionary<string, RegisteredChatCommand> RegisteredCommands = new Dictionary<string, RegisteredChatCommand>();
 
         //In prep for if we want to replace Chat Bot (IRC Client) as well as PubSub
-        internal override void InitializeEventSub(EventSubWebsocketClient eventSub)
+        internal override void InitializeEventSub(Twitchmata.Adapters.EventSubWebsocketClient eventSub)
         {
            /* Logger.LogInfo("Setting up ChatMessageManager with EventSub");
             eventSub.ChannelChatMessage += EventSub_ChannelChatMessage;

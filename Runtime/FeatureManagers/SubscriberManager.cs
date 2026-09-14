@@ -219,7 +219,7 @@ namespace Twitchmata {
 
         #region Internal
 
-        internal override void InitializeEventSub(EventSubWebsocketClient eventSub)
+        internal override void InitializeEventSub(Twitchmata.Adapters.EventSubWebsocketClient eventSub)
         {
 
             eventSub.ChannelSubscriptionMessage -= EventSub_ChannelSubscriptionMessage;

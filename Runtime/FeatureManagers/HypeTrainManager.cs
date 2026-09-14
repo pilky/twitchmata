@@ -95,7 +95,7 @@ namespace Twitchmata
          **************************************************/
         #region Internal
 
-        internal override void InitializeEventSub(EventSubWebsocketClient eventSub)
+        internal override void InitializeEventSub(Twitchmata.Adapters.EventSubWebsocketClient eventSub)
         {
             eventSub.ChannelHypeTrainBegin -= EventSub_ChannelHypeTrainBegin;
             eventSub.ChannelHypeTrainBegin += EventSub_ChannelHypeTrainBegin;

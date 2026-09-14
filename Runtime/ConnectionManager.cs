@@ -17,7 +17,7 @@ namespace Twitchmata {
         public Client Client { get; private set; }
         public HelixEventSub HelixEventSub { get; private set; }
 
-        public EventSubWebsocketClient EventSub { get; private set; }
+        public Twitchmata.Adapters.EventSubWebsocketClient EventSub { get; private set; }
 
         public ConnectionConfig ConnectionConfig { get; private set; }
 
@@ -92,7 +92,6 @@ namespace Twitchmata {
             this.SetupEventSub();
             this.SetupClient();
             this.UserManager = new UserManager(this);
-
             TwitchManager.RunTask(this.API.Auth.ValidateAccessTokenAsync(this.Secrets.BotAccessToken), (vali) =>
             {
                 this.UserManager.FetchUserWithID(vali.UserId, (user) =>
@@ -120,11 +119,11 @@ namespace Twitchmata {
         {
             if (this.UseDebugServer)
             {
-                this.EventSub = new EventSubWebsocketClient("ws://localhost:8080/ws");
+                this.EventSub = new Twitchmata.Adapters.EventSubWebsocketClient("ws://localhost:8080/ws");
             }
             else
             {
-                this.EventSub = new EventSubWebsocketClient();
+                this.EventSub = new Twitchmata.Adapters.EventSubWebsocketClient();
             }
             this.EventSub.WebsocketConnected += EventSub_WebsocketConnected;
             this.EventSub.WebsocketDisconnected += EventSub_WebsocketDisconnected;

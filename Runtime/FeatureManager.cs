@@ -106,7 +106,7 @@ namespace Twitchmata {
 
         internal virtual void InitializeClient(Client client) { }
 
-        internal virtual void InitializeEventSub(EventSubWebsocketClient eventSub) { }
+        internal virtual void InitializeEventSub(Twitchmata.Adapters.EventSubWebsocketClient eventSub) { }
         
         //All feature managers set up by user are guaranteed to exist when this is called
         internal virtual void PerformPostDiscoverySetup() { }
